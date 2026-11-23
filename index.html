@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#071019">
+<meta name="description" content="మీ డ్రాయింగ్‌ను అప్‌లోడ్ చేయండి → Google Lens స్కాన్ చేసే QR → ఆ డ్రాయింగ్ మాత్రమే రియలిస్టిక్ 3Dలో. యాప్ అవసరం లేదు.">
+<title>డ్రాయింగ్ → QR → 3D · క్వాలిటీ మంత్ స్టూడియో</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg:#071019; --panel:#0B1826; --panel2:#0F2236; --ink:#1D3557; --paper:#F6F3EC; --stage:#F2F5F9;
+    --cy:#33E0FF; --cy2:#0EA5C6; --am:#FFB020; --mg:#FF4D8D; --gr:#2DD4A0; --rd:#E63946; --vi:#7048E8;
+    --line:rgba(122,196,255,.16); --line2:rgba(122,196,255,.32);
+    --tx:#DCEAF6; --tx2:#8FA9C2;
+  }
+  *{ -webkit-tap-highlight-color:transparent; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--bg); color:var(--tx); font-family:'Anek Telugu','Space Grotesk',system-ui,sans-serif; overflow-x:hidden; }
+  [hidden]{ display:none !important; }
+  body.lock{ overflow:hidden; }
+  ::selection{ background:rgba(51,224,255,.35); color:#fff; }
+  section{ scroll-margin-top:84px; }
+  .disp{ font-family:'Space Grotesk','Anek Telugu',sans-serif; }
+  .mono{ font-family:'IBM Plex Mono','Anek Telugu',monospace; }
+  /* scrollbar in our palette */
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background:#081120; }
+  ::-webkit-scrollbar-thumb{ background:linear-gradient(180deg,#134a63,#0EA5C6); border-radius:8px; border:2px solid #081120; }
+  ::-webkit-scrollbar-thumb:hover{ background:linear-gradient(180deg,#0EA5C6,#33E0FF); }
+  *{ scrollbar-width:thin; scrollbar-color:#0EA5C6 #081120; }
+  /* ambient */
+  .aurora{ position:fixed; inset:0; z-index:-3; pointer-events:none;
+    background:
+      radial-gradient(52rem 34rem at 84% -8%, rgba(14,165,198,.20), transparent 62%),
+      radial-gradient(44rem 30rem at -12% 34%, rgba(31,80,160,.22), transparent 60%),
+      radial-gradient(38rem 28rem at 72% 96%, rgba(255,77,141,.07), transparent 60%),
+      linear-gradient(180deg,#071019 0%,#0A1626 46%,#071019 100%); }
+  .aurora::after{ content:""; position:absolute; inset:-20%;
+    background:radial-gradient(36rem 24rem at 30% 40%, rgba(51,224,255,.09), transparent 60%);
+    animation:drift 26s ease-in-out infinite alternate; }
+  @keyframes drift{ from{ transform:translate3d(-4%,-2%,0) rotate(-2deg);} to{ transform:translate3d(6%,5%,0) rotate(3deg);} }
+  .bpgrid{ position:fixed; inset:0; z-index:-2; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(122,196,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,196,255,.05) 1px,transparent 1px);
+    background-size:44px 44px; mask-image:radial-gradient(80rem 56rem at 50% 0%, #000 30%, transparent 80%); }
+  .grain{ position:fixed; inset:0; z-index:64; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E"); }
+  /* ui */
+  .chip{ display:inline-flex; align-items:center; gap:.45rem; border:1px solid var(--line); background:rgba(15,34,54,.6); border-radius:999px; padding:.32rem .8rem; font-size:.8rem; color:var(--tx2); }
+  .chip b{ color:var(--cy); font-weight:600; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border-radius:12px; font-weight:600; padding:.7rem 1.2rem; font-size:.94rem; border:1px solid transparent; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s, color .2s; user-select:none; }
+  .btn:active{ transform:translateY(1px) scale(.99); }
+  .btn-cy{ background:linear-gradient(135deg,#12b7d8,#0d84a8); color:#03141c; box-shadow:0 8px 28px -8px rgba(51,224,255,.55), inset 0 1px 0 rgba(255,255,255,.35); }
+  .btn-cy:hover{ box-shadow:0 10px 34px -6px rgba(51,224,255,.75); transform:translateY(-1px); }
+  .btn-amber{ background:linear-gradient(135deg,#FFB020,#e08900); color:#241300; box-shadow:0 8px 26px -10px rgba(255,176,32,.6), inset 0 1px 0 rgba(255,255,255,.4); }
+  .btn-amber:hover{ transform:translateY(-1px); }
+  .btn-ghost{ border-color:var(--line2); color:var(--tx); background:rgba(15,34,54,.5); }
+  .btn-ghost:hover{ border-color:var(--cy); color:var(--cy); }
+  .btn.pulse{ animation:pulseBtn 1.4s ease-in-out 3; }
+  @keyframes pulseBtn{ 0%,100%{ box-shadow:0 0 0 0 rgba(51,224,255,0);} 50%{ box-shadow:0 0 0 10px rgba(51,224,255,.2);} }
+  .card{ background:linear-gradient(180deg,rgba(15,34,54,.85),rgba(10,22,38,.92)); border:1px solid var(--line); border-radius:20px; }
+  .eyebrow{ letter-spacing:.22em; font-size:.72rem; color:var(--cy); }
+  .h-sec{ font-weight:800; font-size:clamp(1.6rem,3.2vw,2.4rem); line-height:1.15; color:#F2F8FE; }
+  .rule{ height:1px; background:linear-gradient(90deg,var(--cy),transparent); opacity:.4; }
+  input[type=text],textarea,select{ background:#081120; border:1px solid var(--line); border-radius:10px; color:var(--tx); padding:.55rem .8rem; width:100%; font-size:.88rem; outline:none; transition:border-color .2s, box-shadow .2s; }
+  input[type=text]:focus,textarea:focus,select:focus{ border-color:var(--cy); box-shadow:0 0 0 3px rgba(51,224,255,.15); }
+  input[type=range]{ -webkit-appearance:none; appearance:none; width:100%; height:22px; background:transparent; cursor:pointer; }
+  input[type=range]::-webkit-slider-runnable-track{ height:5px; border-radius:4px; background:linear-gradient(90deg,#123a52,#0EA5C6); }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:17px; height:17px; margin-top:-6px; border-radius:50%; background:#33E0FF; border:2px solid #04222d; box-shadow:0 0 10px rgba(51,224,255,.8); }
+  input[type=range]::-moz-range-track{ height:5px; border-radius:4px; background:linear-gradient(90deg,#123a52,#0EA5C6); }
+  input[type=range]::-moz-range-thumb{ width:15px; height:15px; border-radius:50%; background:#33E0FF; border:2px solid #04222d; box-shadow:0 0 10px rgba(51,224,255,.8); }
+  input[type=color]{ width:100%; height:38px; border:1px solid var(--line); border-radius:10px; background:#081120; padding:4px; cursor:pointer; }
+  .sw{ position:relative; width:42px; height:23px; border-radius:99px; background:#12253c; border:1px solid var(--line2); transition:.2s; flex:none; display:inline-block; }
+  .sw::after{ content:""; position:absolute; top:2px; left:2px; width:17px; height:17px; border-radius:50%; background:#5D7A99; transition:.2s; }
+  input:checked + .sw{ background:#0d5468; border-color:var(--cy); }
+  input:checked + .sw::after{ left:21px; background:var(--cy); box-shadow:0 0 10px rgba(51,224,255,.9); }
+  .lab{ font-size:.8rem; color:var(--tx2); display:flex; justify-content:space-between; align-items:center; margin-bottom:.2rem; }
+  .lab output{ font-family:'IBM Plex Mono',monospace; color:var(--cy); font-size:.72rem; }
+  .cchip{ width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,.25); cursor:pointer; transition:.15s; flex:none; }
+  .cchip:hover{ transform:scale(1.15); }
+  .cchip.on{ border-color:#fff; box-shadow:0 0 0 3px rgba(255,255,255,.15), 0 0 12px currentColor; }
+  .tab{ padding:.5rem .9rem; border-radius:11px; border:1px solid var(--line); font-size:.85rem; font-weight:600; color:var(--tx2); cursor:pointer; background:rgba(15,34,54,.5); transition:.2s; display:inline-flex; gap:.4rem; align-items:center; }
+  .tab:hover{ color:var(--cy); border-color:var(--line2); }
+  .tab.on{ color:#03141c; background:linear-gradient(135deg,#2fd4f5,#0d84a8); border-color:transparent; box-shadow:0 6px 20px -8px rgba(51,224,255,.6); }
+  .rv{ opacity:0; transform:translateY(24px); transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+  .rv.in{ opacity:1; transform:none; }
+  /* nav */
+  #navBar{ position:fixed; top:0; left:0; right:0; z-index:50; backdrop-filter:blur(14px); background:rgba(7,16,25,.74); border-bottom:1px solid var(--line); }
+  .nlink{ position:relative; font-size:.9rem; color:var(--tx2); padding:.35rem .15rem; transition:color .2s; }
+  .nlink:hover{ color:var(--tx); }
+  .nlink.act{ color:var(--cy); }
+  .nlink.act::after{ content:""; position:absolute; left:0; right:0; bottom:-2px; height:2px; border-radius:2px; background:var(--cy); box-shadow:0 0 8px var(--cy); }
+  /* dropzone */
+  .drop{ border:2px dashed var(--line2); border-radius:16px; background:rgba(8,17,32,.5); transition:.2s; cursor:pointer; }
+  .drop:hover{ border-color:var(--cy); background:rgba(14,40,60,.5); }
+  .drop.over{ border-color:var(--am); background:rgba(60,42,8,.35); transform:scale(1.01); }
+  /* stage */
+  #glWrap{ position:absolute; inset:0; touch-action:none; overflow:hidden; }
+  #glWrap canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; cursor:grab; }
+  #glWrap canvas:active{ cursor:grabbing; }
+  #camVideo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  #glFallback{ position:absolute; inset:0; margin:auto; max-width:70%; max-height:70%; object-fit:contain; filter:drop-shadow(0 24px 24px rgba(20,35,60,.25)); transition:transform .1s; }
+  .stagechip{ display:inline-flex; align-items:center; gap:.4rem; font-size:.74rem; color:#3D5670; background:rgba(255,255,255,.82); border:1px solid rgba(29,53,87,.14); border-radius:99px; padding:.32rem .8rem; backdrop-filter:blur(6px); }
+  .vbtn{ display:inline-flex; flex-direction:column; align-items:center; gap:2px; min-width:56px; padding:.45rem .6rem; border-radius:12px; border:1px solid rgba(29,53,87,.16); background:rgba(255,255,255,.9); color:#1D3557; font-size:.72rem; font-weight:600; cursor:pointer; transition:.15s; backdrop-filter:blur(6px); }
+  .vbtn:hover{ border-color:#0EA5C6; color:#0E7490; transform:translateY(-1px); }
+  .vbtn.on{ background:linear-gradient(135deg,#12b7d8,#0d84a8); color:#03141c; border-color:transparent; }
+  .vbtn .ic{ font-size:1.05rem; line-height:1; }
+  .obtn{ width:44px; height:44px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,.92); border:1px solid rgba(29,53,87,.18); color:#1D3557; cursor:pointer; backdrop-filter:blur(6px); transition:.15s; flex:none; font-size:1rem; }
+  .obtn:hover{ border-color:#0EA5C6; color:#0E7490; }
+  .obtn.dark{ background:rgba(8,18,32,.75); border-color:var(--line2); color:#fff; }
+  .obtn.dark:hover{ border-color:var(--cy); color:var(--cy); }
+  #glLoading{ position:absolute; inset:0; display:flex; flex-direction:column; gap:.8rem; align-items:center; justify-content:center; background:linear-gradient(180deg,#F4F7FB,#E9EEF5); color:#5B7690; z-index:5; }
+  .spinring{ width:44px; height:44px; border-radius:50%; border:3px solid rgba(14,165,198,.2); border-top-color:#0EA5C6; animation:spin 1s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg);} }
+  /* viewer */
+  #viewerRoot{ position:fixed; inset:0; z-index:70; background:var(--stage); }
+  .vbar{ position:absolute; left:0; right:0; z-index:20; display:flex; gap:.55rem; align-items:center; padding:.7rem .9rem; }
+  .vbar.top{ top:0; padding-top:calc(.7rem + env(safe-area-inset-top)); background:linear-gradient(180deg,rgba(242,245,249,.9),rgba(242,245,249,0)); }
+  .vbar.bot{ bottom:0; padding-bottom:calc(.8rem + env(safe-area-inset-bottom)); background:linear-gradient(0deg,rgba(242,245,249,.94),rgba(242,245,249,0)); justify-content:center; flex-wrap:wrap; }
+  #askCard{ position:absolute; inset:0; z-index:30; display:flex; align-items:center; justify-content:center; background:rgba(20,32,48,.35); backdrop-filter:blur(4px); padding:1rem; }
+  /* toasts */
+  #toasts{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:120; display:flex; flex-direction:column; gap:.5rem; align-items:center; pointer-events:none; width:min(92vw,480px); }
+  .toast{ background:rgba(8,18,32,.94); border:1px solid var(--line2); color:var(--tx); border-radius:12px; padding:.6rem 1.1rem; font-size:.88rem; box-shadow:0 12px 40px -10px rgba(0,0,0,.8), 0 0 24px -10px rgba(51,224,255,.5); animation:toastIn .3s cubic-bezier(.2,.9,.3,1.3); text-align:center; }
+  .toast.warn{ border-color:rgba(255,176,32,.6); }
+  .toast.err{ border-color:rgba(230,57,70,.7); }
+  .toast.ok{ border-color:rgba(45,212,160,.6); }
+  @keyframes toastIn{ from{ opacity:0; transform:translateY(14px) scale(.95);} }
+  .stepnum{ font-family:'Space Grotesk',monospace; font-weight:700; font-size:2.4rem; line-height:1; background:linear-gradient(135deg,var(--cy),#0d84a8); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .livedot{ width:8px; height:8px; border-radius:50%; background:var(--gr); box-shadow:0 0 10px var(--gr); animation:blink 1.6s infinite; display:inline-block; }
+  @keyframes blink{ 0%,100%{ opacity:1;} 50%{ opacity:.3;} }
+  .flowarrow{ color:var(--am); font-weight:700; }
+  .surfBtn{ display:flex; flex-direction:column; align-items:center; gap:.3rem; padding:.9rem .4rem .8rem; border-radius:16px; border:1.5px solid rgba(29,53,87,.16); background:#fff; color:#1D3557; cursor:pointer; transition:transform .15s, border-color .15s, box-shadow .2s; }
+  .surfBtn:hover,.surfBtn:focus-visible{ border-color:#0EA5C6; transform:translateY(-2px); box-shadow:0 10px 24px -12px rgba(14,165,198,.7); outline:none; }
+  .surfBtn:active{ transform:scale(.97); }
+  .surfBtn .em{ font-size:1.9rem; line-height:1; }
+  .surfBtn b{ font-size:.95rem; }
+  .surfBtn small{ font-size:.66rem; color:#5B7690; line-height:1.25; }
+  /* నిజమైన AR సెషన్‌లో: స్టూడియో బార్‌లు దాచి, AR బార్ చూపించు */
+  #arBar{ display:none; }
+  #viewerRoot.xr-on #arBar{ display:flex; background:linear-gradient(0deg,rgba(0,0,0,.5),transparent); }
+  #viewerRoot.xr-on #stdBar, #viewerRoot.xr-on .vbar.top{ display:none; }
+  #vLoading{ position:absolute; inset:0; z-index:28; display:flex; flex-direction:column; gap:.8rem; align-items:center; justify-content:center; background:rgba(242,245,249,.96); color:#3D5670; }
+  @media (prefers-reduced-motion: reduce){ .aurora::after{ animation:none !important; } }
+</style>
+</head>
+<body class="antialiased">
+<div class="aurora"></div><div class="bpgrid"></div><div class="grain"></div>
+
+<!-- ============ NAV ============ -->
+<header id="navBar">
+  <div class="max-w-[1400px] mx-auto px-4 sm:px-6 h-16 flex items-center gap-5">
+    <a href="#studio" class="flex items-center gap-2.5 mr-1">
+      <svg width="34" height="34" viewBox="0 0 40 40" fill="none"><rect x="5" y="5" width="12" height="12" rx="2" stroke="#33E0FF" stroke-width="3"/><rect x="23" y="5" width="12" height="12" rx="2" stroke="#33E0FF" stroke-width="3"/><rect x="5" y="23" width="12" height="12" rx="2" stroke="#33E0FF" stroke-width="3"/><path d="M23 23h5v5h-5zM30 30h5v5h-5zM30 23h5M23 30v5" stroke="#FFB020" stroke-width="3"/></svg>
+      <span class="font-bold text-[1.02rem] text-white leading-none">డ్రాయింగ్ → 3D<span class="mono block text-[.56rem] tracking-[.3em] mt-0.5" style="color:var(--cy)">SCAN · SEE · WALK AROUND</span></span>
+    </a>
+    <nav class="hidden md:flex items-center gap-6 ml-3">
+      <a class="nlink" href="#studio" data-sec="studio">స్టూడియో</a>
+      <a class="nlink" href="#qr" data-sec="qr">QR & లింక్</a>
+      <a class="nlink" href="#how" data-sec="how">ఎలా పనిచేస్తుంది</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2.5">
+      <button id="soundBtn" class="obtn dark" style="width:40px;height:40px" title="సౌండ్ ఆన్/ఆఫ్" aria-label="సౌండ్ టోగుల్">
+        <svg id="icoSndOn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <svg id="icoSndOff" hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m16 9 6 6M22 9l-6 6"/></svg>
+      </button>
+      <a href="#qr" id="navCta" class="btn btn-cy text-sm" style="padding:.5rem 1rem">📱 QR స్కాన్ టెస్ట్</a>
+    </div>
+  </div>
+</header>
+
+<main class="pt-16">
+<!-- ============ HERO STRIP ============ -->
+<section class="max-w-[1400px] mx-auto px-4 sm:px-6 pt-8 pb-6">
+  <div class="flex flex-wrap items-center gap-x-8 gap-y-4 rv in">
+    <div class="min-w-[260px]">
+      <div class="mono eyebrow">క్వాలిటీ మంత్ · వెబ్ ప్రాజెక్ట్</div>
+      <h1 class="font-extrabold text-[clamp(1.7rem,3.6vw,2.7rem)] leading-[1.15] text-white mt-1">
+        గీయండి <span class="flowarrow">→</span> అప్‌లోడ్ <span class="flowarrow">→</span> స్కాన్ <span class="flowarrow">→</span> <span class="bg-clip-text text-transparent" style="background-image:linear-gradient(100deg,#33E0FF,#2DD4A0 55%,#FFB020)">3D</span>
+      </h1>
+      <p class="text-[.95rem] mt-1.5 max-w-xl" style="color:var(--tx2)">మీ డ్రాయింగ్ ఫోటో (PNG · JPG · PDF) ఇవ్వండి — అది ఆటోమేటిక్‌గా మీ QRకి జతవుతుంది (<b style="color:var(--tx)">QR మారదు</b> — డ్రాయింగ్ మాత్రమే మారుతుంది). Google Lensతో స్కాన్ చేసిన వారికి <b style="color:var(--tx)">ఆ ఒక్క డ్రాయింగ్ మాత్రమే</b> రియలిస్టిక్ 3Dలో కనిపిస్తుంది.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <span class="chip">✅ <b>Google Lens</b>&nbsp;ప్లెయిన్ హై-కాంట్రాస్ట్ QR</span>
+      <span class="chip">🔄 ఫోన్ కదిలిస్తే <b>ముందు / పక్క / పై</b> వ్యూ</span>
+      <span class="chip">⚡ స్కాన్ చేయగానే <b>నేరుగా ఓపెన్</b> — చిన్న లింక్ QR</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STUDIO ============ -->
+<section id="studio" class="max-w-[1400px] mx-auto px-4 sm:px-6 pb-14">
+  <div class="grid gap-5 xl:grid-cols-[300px_minmax(0,1fr)_296px] lg:grid-cols-[290px_minmax(0,1fr)]">
+
+    <!-- upload / source -->
+    <div class="space-y-5 order-2 lg:order-1">
+      <div class="card p-5 rv in">
+        <div class="flex items-center justify-between">
+          <div class="font-bold text-white">① మీ డ్రాయింగ్</div>
+          <button id="btnSample" class="tab" style="padding:.3rem .7rem;font-size:.74rem">✨ నమూనా</button>
+        </div>
+        <div id="dropZone" class="drop mt-3 p-5 text-center">
+          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,application/pdf" class="hidden">
+          <div class="text-3xl">🖼️</div>
+          <div class="font-semibold text-white text-[.92rem] mt-1.5">ఫోటో / PDF ఇక్కడ వదలండి</div>
+          <div class="text-[.74rem] mt-1" style="color:var(--tx2)">లేదా ట్యాప్ చేసి ఎంచుకోండి<br>PNG · JPG · WEBP · PDF (మొదటి పేజీ)</div>
+          <div class="mono text-[.62rem] tracking-[.2em] mt-2.5" style="color:var(--am)">తెల్ల కాగితంపై గీసినది బెస్ట్ ✓</div>
+        </div>
+        <div class="mt-4 flex gap-3 items-start">
+          <div class="rounded-xl overflow-hidden border flex-none" style="border-color:var(--line);background:#fff;width:92px;height:92px">
+            <canvas id="srcThumb" width="184" height="184" style="width:100%;height:100%;object-fit:contain"></canvas>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div id="fileName" class="text-[.8rem] text-white font-semibold truncate">నమూనా — క్వాలిటీ గేర్</div>
+            <div id="procStatus" class="text-[.72rem] mt-1 leading-snug" style="color:var(--tx2)">ప్రాసెస్ అవుతోంది…</div>
+            <button id="thumbMode" class="tab mt-2" style="padding:.25rem .65rem;font-size:.7rem">అసలు ⇄ ప్రాసెస్డ్</button>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 text-[.72rem] leading-relaxed" style="border-top:1px solid var(--line);color:var(--tx2)">
+          🪄 తెల్ల కాగితం ఆటోమేటిక్‌గా తొలగించబడుతుంది — సిరా మాత్రమే 3D అవుతుంది. చుట్టూ తిప్పి చూడటానికి కుడి వైపు ప్రీవ్యూను డ్రాగ్ చేయండి.
+        </div>
+      </div>
+
+      <div class="card p-5 rv in hidden xl:block">
+        <div class="font-bold text-white text-[.95rem]">💡 మంచి ఫలితం కోసం</div>
+        <ul class="mt-2.5 space-y-2 text-[.78rem]" style="color:var(--tx2)">
+          <li class="flex gap-2"><span style="color:var(--gr)">✓</span> తెల్ల కాగితంపై చిక్కని పెన్/మార్కర్ గీతలు</li>
+          <li class="flex gap-2"><span style="color:var(--gr)">✓</span> మంచి వెలుతురులో, నీడలు లేకుండా ఫోటో</li>
+          <li class="flex gap-2"><span style="color:var(--am)">!</span> ఫోటో బాగా క్లిష్టంగా ఉంటే థ్రెషోల్డ్ సర్దుబాటు చేయండి</li>
+          <li class="flex gap-2"><span style="color:var(--cy)">i</span> QR ఒక్కసారి ప్రింట్ చేస్తే చాలు — కొత్త డ్రాయింగ్ ఇస్తే అదే QRలో మారుతుంది</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3D stage -->
+    <div class="order-1 lg:order-2 lg:col-span-1 xl:col-span-1">
+      <div class="card overflow-hidden rv in">
+        <div class="flex flex-wrap items-center gap-2 px-4 py-3" style="border-bottom:1px solid var(--line)">
+          <span class="font-bold text-white text-[.95rem] mr-1">② లైవ్ 3D ప్రివ్యూ</span>
+          <button id="bgWhite" class="tab on" style="padding:.32rem .7rem;font-size:.76rem">⬜ తెల్ల స్టూడియో</button>
+          <button id="bgCam" class="tab" style="padding:.32rem .7rem;font-size:.76rem">📷 కెమెరా</button>
+          <div class="ml-auto flex gap-1.5">
+            <button id="presetFront" class="tab" style="padding:.32rem .6rem;font-size:.74rem" title="ముందు వ్యూ">ముందు</button>
+            <button id="presetSide" class="tab" style="padding:.32rem .6rem;font-size:.74rem" title="పక్క వ్యూ">పక్క</button>
+            <button id="presetTop" class="tab" style="padding:.32rem .6rem;font-size:.74rem" title="పై వ్యూ">పైన</button>
+            <button id="stageExpand" class="tab" style="padding:.32rem .6rem;font-size:.74rem" title="ఫుల్ స్క్రీన్ వ్యూయర్">⛶</button>
+          </div>
+        </div>
+        <div id="studioSlot" class="relative h-[420px] sm:h-[520px]" style="background:var(--stage)">
+          <div id="glWrap">
+            <video id="camVideo" autoplay playsinline muted hidden></video>
+            <img id="glFallback" alt="డ్రాయింగ్ ప్రివ్యూ" hidden>
+            <div id="glLoading"><div class="spinring"></div><div class="text-[.82rem] font-semibold">3D ఇంజిన్ లోడ్ అవుతోంది…</div></div>
+          </div>
+          <div class="absolute left-3 top-3 z-10 flex flex-col gap-2 items-start" style="pointer-events:none">
+            <span class="stagechip"><span class="livedot"></span> డ్రాగ్ = తిప్పు · పించ్/స్క్రోల్ = జూమ్</span>
+            <span class="stagechip" id="dimChip">—</span>
+          </div>
+          <div class="absolute right-3 top-3 z-10 flex gap-2">
+            <button id="motionBtn" class="obtn" hidden title="ఫోన్ కదలికతో కోణం (మోషన్)">🧭</button>
+            <button id="shotBtn" class="obtn" title="ఫోటో సేవ్">📸</button>
+          </div>
+          <div class="absolute left-3 bottom-3 z-10" style="pointer-events:none">
+            <span class="stagechip">📱 ఫోన్‌లో: కెమెరా ఆన్ చేసి కదిలిస్తే — పక్క, ముందు, పై వ్యూలు!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <aside class="card p-5 order-3 lg:col-span-2 xl:col-span-1 rv in xl:sticky xl:top-20 xl:max-h-[calc(100vh-6.5rem)] xl:overflow-y-auto">
+      <div class="font-bold text-white pb-3" style="border-bottom:1px solid var(--line)">③ హోలో కంట్రోల్స్ <span class="mono text-[.6rem] tracking-[.2em] ml-1" style="color:var(--cy)">LIVE</span></div>
+      <div class="mt-4 grid sm:grid-cols-2 xl:grid-cols-1 gap-x-6 gap-y-4">
+        <div><div class="lab">సిరా థ్రెషోల్డ్ <output id="vThr">150</output></div><input type="range" id="cThr" min="60" max="230" step="1" value="150"></div>
+        <div><div class="lab">మచ్చల శుభ్రత <output id="vDen">1</output></div><input type="range" id="cDen" min="0" max="4" step="1" value="1"></div>
+        <label class="flex items-center justify-between cursor-pointer"><span class="text-[.84rem]" style="color:var(--tx2)">ఇన్వర్ట్ (నలుపు కాగితంపై తెల్ల గీత)</span><input type="checkbox" id="cInv" class="sr-only"><span class="sw"></span></label>
+        <div>
+          <div class="lab">సిరా రంగు</div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex gap-1.5 flex-wrap" id="inkChips"></div>
+            <input type="color" id="cInk" value="#1D3557" style="width:44px" aria-label="కస్టమ్ సిరా రంగు">
+          </div>
+        </div>
+        <div><div class="lab">3D మందం <output id="vThick">22 మి.మీ</output></div><input type="range" id="cThick" min="2" max="80" step="1" value="22"></div>
+        <div><label class="lab" for="cSurface">ఎక్కడ చూపించాలి (సర్ఫేస్)</label>
+          <select id="cSurface"><option value="paper">📄 ప్లెయిన్ పేపర్ / టేబుల్</option><option value="wall">🧱 గోడ</option><option value="poster">🖼️ పోస్టర్</option></select></div>
+        <div><div class="lab">సైజ్ (ఎత్తు) <output id="vSize">100%</output></div><input type="range" id="cSize" min="60" max="170" step="1" value="100"></div>
+        <div><div class="lab">ఆటో-తిరుగుదల <output id="vSpin">8</output></div><input type="range" id="cSpin" min="0" max="40" step="1" value="8"></div>
+        <label class="flex items-center justify-between cursor-pointer"><span class="text-[.84rem]" style="color:var(--tx2)">నేల మీద నీడ</span><input type="checkbox" id="cShadow" class="sr-only" checked><span class="sw"></span></label>
+        <label class="flex items-center justify-between cursor-pointer"><span class="text-[.84rem]" style="color:var(--tx2)">తెల్ల కాగితం బేస్</span><input type="checkbox" id="cPaper" class="sr-only" checked><span class="sw"></span></label>
+        <label class="flex items-center justify-between cursor-pointer"><span class="text-[.84rem]" style="color:var(--tx2)">స్టూడియో గ్రిడ్</span><input type="checkbox" id="cGrid" class="sr-only"><span class="sw"></span></label>
+        <label class="flex items-center justify-between cursor-pointer"><span class="text-[.84rem]" style="color:var(--cy)">📦 ఆఫ్‌లైన్ QR ప్రివ్యూ <span class="mono text-[.6rem]">(లైన్-ఆర్ట్)</span></span><input type="checkbox" id="cQrPrev" class="sr-only" checked><span class="sw"></span></label>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mt-5 pt-4" style="border-top:1px solid var(--line)">
+        <button id="btnReset" class="btn btn-ghost text-[.78rem]" style="padding:.5rem .3rem">↺ రీసెట్</button>
+        <button id="btnRandomInk" class="btn btn-ghost text-[.78rem]" style="padding:.5rem .3rem">🎲 రంగు</button>
+        <button id="btnExportPng" class="btn btn-cy text-[.78rem]" style="padding:.5rem .3rem">⬇ PNG</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ QR & LINK ============ -->
+<section id="qr" class="max-w-[1400px] mx-auto px-4 sm:px-6 py-14">
+  <div class="rv">
+    <div class="mono eyebrow">④ / QR & లింక్</div>
+    <h2 class="h-sec mt-2">Google Lens సిద్ధం — ప్లెయిన్ QR, వైట్ బ్యాక్‌గ్రౌండ్</h2>
+    <div class="rule mt-4 max-w-xs"></div>
+    <p class="mt-3 max-w-2xl text-[.95rem]" style="color:var(--tx2)">ఇది అలంకార QR కాదు — <b style="color:var(--tx)">ప్యూర్ నలుపు-తెలుపు చతురస్రాలు</b>, వెడల్పాటి తెల్ల అంచు. QRలో ఇప్పుడు <b style="color:var(--tx)">చిన్న లింక్ మాత్రమే</b> ఉంటుంది — అందుకే స్కానర్ దాన్ని “Text”గా కాకుండా <b style="color:var(--tx)">నేరుగా ఓపెన్ చేసే లింక్‌గా</b> గుర్తిస్తుంది. QR ఒక్కసారి ప్రింట్ చేస్తే చాలు; కొత్త డ్రాయింగ్ ఇస్తే అదే QRలో ఆటోమేటిక్‌గా మారుతుంది.</p>
+  </div>
+
+  <div class="mt-8 grid lg:grid-cols-[minmax(0,470px)_1fr] gap-7 items-start">
+    <div class="rv bg-white rounded-2xl p-6 sm:p-8 shadow-[0_30px_80px_-30px_rgba(0,0,0,.8),0_0_60px_-24px_rgba(51,224,255,.35)]">
+      <div class="flex items-center justify-between mb-4">
+        <span class="mono text-[.66rem] tracking-[.22em] text-[#1D3557]/60">PLAIN · BLACK ON WHITE · SHORT LINK</span>
+        <span id="qrEase" class="mono text-[.66rem] px-2.5 py-1 rounded-full bg-[#0B3B2E] text-[#2DD4A0]">స్కాన్: సులభం ✓</span>
+      </div>
+      <canvas id="qrCanvas" class="w-full h-auto block" width="840" height="840" aria-label="డ్రాయింగ్ QR కోడ్"></canvas>
+      <div id="qrMeta" class="mono text-center text-[.7rem] text-[#1D3557]/60 mt-4">—</div>
+      <div class="mt-4 rounded-xl p-3.5 text-[.78rem] leading-relaxed" style="background:#F1F5F9;color:#3D5670">
+        <b style="color:#1D3557">📷 Lens టిప్స్:</b> ప్రింట్ ≥ 6×6 సెం.మీ · మ్యాట్ వైట్ పేపర్ · చదునుగా అతికించండి · మంచి వెలుతురులో స్కాన్ చేయండి. స్క్రీన్ మీద చూపినా పనిచేస్తుంది.
+      </div>
+    </div>
+
+    <div class="card p-6 rv" style="transition-delay:.08s">
+      <label class="lab" for="baseUrl">హోస్టింగ్ బేస్ లింక్ (ఈ పేజీ ఆన్‌లైన్ URL)</label>
+      <input type="text" id="baseUrl" spellcheck="false" placeholder="https://మీసైట్.github.io/drawing3d/">
+      <p class="text-[.72rem] mt-1.5" style="color:var(--tx2)">GitHub Pages / Netlifyలో ఈ ఫైల్ హోస్ట్ చేసి, ఆ URL ఇక్కడ ఉంచండి. ☁ మోడ్‌లో దీని చివర చిన్న <span class="mono" style="color:var(--cy)">#j=ID</span> మాత్రమే చేరుతుంది — అందుకే QR చిన్నది, స్కాన్ సులభం.</p>
+
+      <label class="lab mt-4" for="linkOut">పూర్తి లింక్ (స్కాన్ చేస్తే ఇదే ఓపెన్ అవుతుంది)</label>
+      <textarea id="linkOut" rows="3" readonly class="mono" style="font-size:.68rem;line-height:1.5"></textarea>
+
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <label class="lab" for="qrQuality">లింక్ మోడ్</label>
+          <select id="qrQuality">
+            <option value="cloud" selected>☁ షార్ట్ లింక్ — నేరుగా ఓపెన్ ⭐</option>
+            <option value="easy">📦 ఆఫ్‌లైన్ — సులభ స్కాన్</option>
+            <option value="balanced">📦 ఆఫ్‌లైన్ — బ్యాలెన్స్</option>
+            <option value="high">📦 ఆఫ్‌లైన్ — హై డీటెయిల్ (పెద్ద QR)</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <div id="qrBytes" class="chip w-full justify-center mono" style="font-size:.7rem">—</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2.5 mt-5">
+        <div id="cloudStatus" class="w-full rounded-xl px-3.5 py-2.5 text-[.8rem] leading-snug" style="background:rgba(8,17,32,.6);border:1px solid var(--line);color:var(--tx2)">☁ —</div>
+        <button id="btnPublish" class="btn btn-cy">☁ పబ్లిష్ / అప్‌డేట్</button>
+        <button id="btnNewQr" class="btn btn-ghost" title="వేరే డ్రాయింగ్ కోసం కొత్త QR">🆕 కొత్త QR</button>
+        <button id="btnOpenViewer" class="btn btn-amber">👁 వ్యూయర్ తెరువు (స్కాన్ అనుభవం)</button>
+        <button id="btnCopyLink" class="btn btn-ghost">🔗 లింక్ కాపీ</button>
+        <button id="btnQrPng" class="btn btn-cy">⬇ QR PNG</button>
+        <button id="btnQrSvg" class="btn btn-ghost">⬇ SVG</button>
+        <button id="btnPoster" class="btn btn-ghost">🖼 పోస్టర్ PNG</button>
+      </div>
+
+      <div class="mt-5 pt-4 flex items-start gap-3 text-[.78rem]" style="border-top:1px solid var(--line);color:var(--tx2)">
+        <span style="color:var(--am)">☁</span>
+        <p>☁ షార్ట్-లింక్ మోడ్‌లో శుభ్రం చేసిన డ్రాయింగ్ ఒక పబ్లిక్ క్లౌడ్ స్టోర్‌లో (jsonblob) సేవ్ అవుతుంది — లింక్ ఉన్న ఎవరైనా చూడగలరు, కాబట్టి రహస్య సమాచారం పెట్టవద్దు. పూర్తిగా ఆఫ్‌లైన్ కావాలంటే 📦 మోడ్ ఎంచుకోండి. QR స్కాన్ చేసిన ప్రతి ఒక్కరికీ <b style="color:var(--tx)">అదే ఒక్క డ్రాయింగ్</b> మాత్రమే 3Dలో కనిపిస్తుంది.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW ============ -->
+<section id="how" class="max-w-[1400px] mx-auto px-4 sm:px-6 py-14">
+  <div class="rv">
+    <div class="mono eyebrow">⑤ / ఎలా పనిచేస్తుంది</div>
+    <h2 class="h-sec mt-2">మూడు అడుగులు — యాప్ లేదు</h2>
+    <div class="rule mt-4 max-w-xs"></div>
+  </div>
+  <div class="grid md:grid-cols-3 gap-5 mt-8">
+    <div class="card p-6 rv">
+      <div class="stepnum">01</div>
+      <h3 class="font-bold text-lg text-white mt-2.5">డ్రాయింగ్ ఇవ్వండి</h3>
+      <p class="text-[.9rem] mt-2 leading-relaxed" style="color:var(--tx2)">కాగితంపై గీసిన చిత్రం ఫోటో తీయండి లేదా PDF ఇవ్వండి. తెల్ల కాగితం తొలగించి, గీతలు శుభ్రం చేసి, ఆటోమేటిక్‌గా మీ QRకి జతవుతుంది — QR మళ్లీ ప్రింట్ చేయాల్సిన పని లేదు.</p>
+      <div class="mono text-[.64rem] tracking-[.2em] mt-3.5" style="color:var(--cy)">UPLOAD → CLEAN → PUBLISH</div>
+    </div>
+    <div class="card p-6 rv" style="transition-delay:.08s">
+      <div class="stepnum">02</div>
+      <h3 class="font-bold text-lg text-white mt-2.5">QR ప్రింట్ / షేర్</h3>
+      <p class="text-[.9rem] mt-2 leading-relaxed" style="color:var(--tx2)">ప్లెయిన్ QRను పోస్టర్‌పై ప్రింట్ చేయండి లేదా లింక్ షేర్ చేయండి. <b style="color:var(--tx)">Google Lens</b>, ఫోన్ కెమెరా — ఏ స్కానర్‌తోనైనా తెరుచుకుంటుంది.</p>
+      <div class="mono text-[.64rem] tracking-[.2em] mt-3.5" style="color:var(--cy)">GOOGLE LENS ✓ ANY SCANNER ✓</div>
+    </div>
+    <div class="card p-6 rv" style="transition-delay:.16s">
+      <div class="stepnum">03</div>
+      <h3 class="font-bold text-lg text-white mt-2.5">3Dలో చుట్టూ తిరగండి</h3>
+      <p class="text-[.9rem] mt-2 leading-relaxed" style="color:var(--tx2)"><b style="color:var(--tx)">పేపర్, గోడ లేదా పోస్టర్</b> — ఎక్కడ చూపించాలో అడుగుతుంది. డ్రాయింగ్ మందమైన 3D స్టాండీలా నిలబడుతుంది — ఫోన్ కదిలిస్తే <b style="color:var(--am)">ముందు, పక్క, పై</b> కోణాల నుంచి చూడవచ్చు.</p>
+      <div class="mono text-[.64rem] tracking-[.2em] mt-3.5" style="color:var(--am)">FRONT · SIDE · TOP · AR</div>
+    </div>
+  </div>
+  <div class="mt-7 card p-5 flex flex-wrap items-center gap-x-6 gap-y-3 rv" style="border-color:rgba(255,176,32,.35)">
+    <span class="font-bold" style="color:var(--am)">⚠ గమనిక</span>
+    <p class="text-[.85rem] flex-1 min-w-[240px]" style="color:var(--tx2)">కెమెరా & మోషన్ కోసం పేజీ <b class="text-white">HTTPS</b>లో ఉండాలి. Android Chromeలో నిజమైన సర్ఫేస్ ట్రాకింగ్ (WebXR) కూడా అందుబాటులో ఉంటుంది; మిగతా వాటిలో కెమెరా + మోషన్ మోడ్ పనిచేస్తుంది.</p>
+    <div class="flex gap-2 flex-wrap mono" style="font-size:.62rem">
+      <span class="chip">Three.js</span><span class="chip">WebXR hit-test</span><span class="chip">pdf.js</span><span class="chip">Short-link QR</span>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="mt-4" style="border-top:1px solid var(--line)">
+  <div class="max-w-[1400px] mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center gap-4 justify-between">
+    <div class="text-[.85rem]" style="color:var(--tx2)">క్వాలిటీ మంత్ ప్రాజెక్ట్ · గీత → కోడ్ → అనుభవం</div>
+    <div class="mono text-[.64rem] tracking-[.25em]" style="color:var(--tx2)">ONE QR · ANY DRAWING · <span style="color:var(--cy)">SCAN TO SEE</span></div>
+  </div>
+</footer>
+
+<!-- ============ VIEWER (స్కాన్ చేసినవారి అనుభవం) ============ -->
+<div id="viewerRoot" hidden>
+  <div id="viewerSlot" class="absolute inset-0"></div>
+  <div id="vLoading" hidden><div class="spinring"></div><div class="font-semibold text-[.9rem]">మీ డ్రాయింగ్ లోడ్ అవుతోంది…</div></div>
+  <div class="vbar top">
+    <button id="vExit" class="obtn" title="స్టూడియోకు వెళ్లు">✕</button>
+    <div class="min-w-0">
+      <div class="font-bold text-[.95rem] leading-tight" style="color:#1D3557" id="vTitle">మీ డ్రాయింగ్ · 3D</div>
+      <div class="mono text-[.6rem] tracking-[.2em]" style="color:#5B7690">ONE DRAWING · 360° VIEW</div>
+    </div>
+    <div class="ml-auto flex gap-2">
+      <button id="vHelp" class="obtn" title="సహాయం">?</button>
+      <button id="vMotion" class="obtn" hidden title="మోషన్ ఆన్">🧭</button>
+      <button id="vXR" class="obtn" hidden title="నిజమైన సర్ఫేస్‌పై ఉంచు (AR)">🎯</button>
+    </div>
+  </div>
+  <div class="absolute left-1/2 -translate-x-1/2 z-10" style="top:calc(76px + env(safe-area-inset-top));pointer-events:none">
+    <span class="stagechip" id="vHint">డ్రాగ్ చేసి తిప్పండి · ఫోన్ కదిలిస్తే కోణం మారుతుంది</span>
+  </div>
+  <div class="vbar bot" id="stdBar">
+    <button id="vFront" class="vbtn"><span class="ic">🧍</span>ముందు</button>
+    <button id="vSide" class="vbtn"><span class="ic">↔️</span>పక్క</button>
+    <button id="vTop" class="vbtn"><span class="ic">⬇️</span>పైన</button>
+    <button id="vSurf" class="vbtn"><span class="ic" id="vSurfIc">📄</span><span id="vSurfLabel">పేపర్</span></button>
+    <button id="vBg" class="vbtn"><span class="ic">📷</span><span id="vBgLabel">కెమెరా</span></button>
+    <button id="vSpinBtn" class="vbtn on"><span class="ic">🔄</span>తిరుగుదల</button>
+    <button id="vShot" class="vbtn"><span class="ic">📸</span>ఫోటో</button>
+  </div>
+  <div class="vbar bot" id="arBar">
+    <button id="arMinus" class="vbtn"><span class="ic">➖</span>చిన్నది</button>
+    <button id="arPlus" class="vbtn"><span class="ic">➕</span>పెద్దది</button>
+    <button id="arRot" class="vbtn"><span class="ic">🔄</span>తిప్పు</button>
+    <button id="arLay" class="vbtn"><span class="ic">📄</span><span id="arLayLabel">పడుకోబెట్టు</span></button>
+    <button id="arMove" class="vbtn on"><span class="ic">📍</span>ఇక్కడ ఉంచు</button>
+    <button id="arExit" class="vbtn"><span class="ic">✕</span>ముగించు</button>
+  </div>
+  <div id="askCard" hidden>
+    <div class="rounded-3xl p-5 sm:p-7 max-w-md w-full text-center shadow-2xl" style="background:#FDFCF9;border:1px solid rgba(29,53,87,.12)">
+      <div class="mono text-[.62rem] tracking-[.24em]" style="color:#0E7490">QUALITY MONTH · 3D</div>
+      <h3 class="font-extrabold text-[1.35rem] mt-1.5 leading-tight" style="color:#1D3557">డ్రాయింగ్‌ను ఎక్కడ చూపించాలి?</h3>
+      <p class="text-[.86rem] mt-1.5 leading-relaxed" style="color:#4A6076">ఒకటి ఎంచుకోండి — కెమెరా తెరుచుకుంటుంది, డ్రాయింగ్ అక్కడే <b>3Dలో</b> కనిపిస్తుంది.</p>
+      <div class="grid grid-cols-3 gap-2.5 mt-4">
+        <button class="surfBtn" data-surface="paper"><span class="em">📄</span><b>పేపర్</b><small>ఖాళీ కాగితం / టేబుల్ మీద</small></button>
+        <button class="surfBtn" data-surface="wall"><span class="em">🧱</span><b>గోడ</b><small>గోడ మీద 3Dగా</small></button>
+        <button class="surfBtn" data-surface="poster"><span class="em">🖼️</span><b>పోస్టర్</b><small>పోస్టర్ నుంచి బయటికి</small></button>
+      </div>
+      <button id="askXR" class="btn btn-amber w-full mt-3" hidden>🎯 నిజమైన AR — సర్ఫేస్‌ను గుర్తించి ఉంచు</button>
+      <button id="askWhite" class="w-full mt-3 text-[.82rem] font-semibold underline underline-offset-4" style="color:#3D5670;cursor:pointer">కెమెరా వద్దు — తెల్ల బ్యాక్‌గ్రౌండ్‌లో చూడు</button>
+      <div class="mono text-[.58rem] tracking-[.18em] mt-3.5" style="color:#8AA0B4">ఫోన్ కదిలిస్తే: ముందు · పక్క · పైన వ్యూ</div>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+<noscript><div style="position:fixed;inset:0;background:#071019;color:#fff;display:flex;align-items:center;justify-content:center;z-index:999;padding:2rem;text-align:center">ఈ అనుభవానికి JavaScript అవసరం.</div></noscript>
+
+<script>
+'use strict';
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const debounce=(fn,ms)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
+function toast(msg,kind='',ms=2800){ const t=document.createElement('div'); t.className='toast '+kind; t.textContent=msg; $('#toasts').appendChild(t); setTimeout(()=>{ t.style.transition='opacity .4s,transform .4s'; t.style.opacity='0'; t.style.transform='translateY(8px)'; setTimeout(()=>t.remove(),420); },ms); }
+let AC=null;
+function ping(f=880,d=.12,type='sine',g=.045){ if(!S.sound) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended')AC.resume(); const o=AC.createOscillator(),v=AC.createGain(); o.type=type;o.frequency.value=f; v.gain.setValueAtTime(g,AC.currentTime); v.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d); o.connect(v).connect(AC.destination); o.start(); o.stop(AC.currentTime+d+.02);}catch(e){} }
+const sndOk=()=>{ ping(660,.12); setTimeout(()=>ping(990,.16),70); };
+const sndSnap=()=>{ ping(240,.06,'square',.05); setTimeout(()=>ping(1200,.08,'sine',.03),60); };
+function hexRGB(h){ h=h.replace('#',''); if(h.length===3)h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+function download(name,url){ const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); }
+
+/* ================= state ================= */
+const INKS=['#1D3557','#000000','#0EA5C6','#E63946','#F4A100','#2DD4A0','#FF4D8D','#7048E8'];
+const DEF={ thr:150, den:1, inv:false, ink:'#1D3557', thick:22, size:100, spin:8, shadow:true, paper:true, grid:false, qrPrev:false, quality:'cloud', surface:'paper' };
+const S=Object.assign({ sound:true, bg:'white', mode:'studio' }, DEF);
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){ S.spin=0; DEF.spin=0; }
+let srcCanvas=null, procCanvas=null, gridData=null, payload='', fullLink='', qrN=0;
+let thumbShowProc=true, T3=null, glReady=false, glFail=false, xrApi=null, xrBusy=false, threePreload=null;
+let isSample=true, inlineLink='', skipPublish=false;
+const GUEST=/^#(j=|k=|d=|s\b)/.test(location.hash);   /* QR స్కాన్ చేసి వచ్చినవారు → డ్రాయింగ్ మాత్రమే */
+const cloud={ p:'', id:'', ok:false, busy:false };
+const THREE_URL='https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+/* ================= sample drawing ================= */
+function sampleSVG(){
+  const teeth=(()=>{ let d=''; const n=8,cx=120,cy=104; for(let t=0;t<n;t++){ const a0=t/n*Math.PI*2,w=Math.PI*2/n; [[a0,50],[a0+w*.16,64],[a0+w*.5,64],[a0+w*.66,50]].forEach((p,k)=>{ const x=(cx+Math.cos(p[0])*p[1]).toFixed(1),y=(cy+Math.sin(p[0])*p[1]).toFixed(1); d+=(t===0&&k===0?'M':'L')+x+' '+y+' '; }); } return d+'Z'; })();
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 268" width="900" height="1005"><rect width="240" height="268" fill="#ffffff"/><g fill="none" stroke="#243B63" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="${teeth}"/><circle cx="120" cy="104" r="30"/><path d="M97 106 L114 126 L149 78"/><path d="M99 111 L114 129" stroke-width="2"/><ellipse cx="120" cy="196" rx="86" ry="14" stroke-dasharray="5 7" stroke-width="2"/><path d="M38 50v16M30 58h16M206 78v12M200 84h12M190 180v10M185 185h10" stroke-width="2.4"/></g><text x="120" y="246" text-anchor="middle" font-family="Arial" font-weight="700" font-size="16" letter-spacing="4" fill="#243B63">QUALITY FIRST</text><text x="120" y="261" text-anchor="middle" font-family="Arial" font-size="9" letter-spacing="2" fill="#243B63">· MY DRAWING ·</text></svg>`;
+}
+function loadSample(){
+  isSample=true;
+  const img=new Image();
+  img.onload=()=>{ const c=document.createElement('canvas'); c.width=900; c.height=1005; const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,900,1005); x.drawImage(img,0,0,900,1005); srcCanvas=c; $('#fileName').textContent='నమూనా — క్వాలిటీ గేర్'; runPipeline(); };
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sampleSVG());
+}
+
+/* ================= file intake (PNG/JPG/PDF) ================= */
+function setImageFromSource(img,name){
+  const max=1500, sc=Math.min(1, max/Math.max(img.width,img.height));
+  const c=document.createElement('canvas'); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc);
+  const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height);
+  isSample=false; srcCanvas=c; $('#fileName').textContent=name; runPipeline(); sndOk(); toast('డ్రాయింగ్ అందుకున్నాను ✓ ప్రాసెస్ అవుతోంది…','ok');
+}
+async function handleFile(file){
+  if(!file) return;
+  const isPdf=file.type==='application/pdf' || /\.pdf$/i.test(file.name);
+  if(isPdf){
+    try{
+      $('#procStatus').textContent='PDF లోడ్ అవుతోంది…';
+      if(!window.pdfjsLib){
+        await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+        pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+      }
+      const buf=await file.arrayBuffer();
+      const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+      const page=await pdf.getPage(1);
+      const vp0=page.getViewport({scale:1}); const scale=Math.min(3, 1400/Math.max(vp0.width,vp0.height));
+      const vp=page.getViewport({scale});
+      const c=document.createElement('canvas'); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+      const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height);
+      await page.render({canvasContext:x, viewport:vp}).promise;
+      isSample=false;
+      srcCanvas=c; $('#fileName').textContent=file.name+' (పేజీ 1)'; runPipeline(); sndOk(); toast('PDF మొదటి పేజీ అందుకున్నాను ✓','ok');
+    }catch(e){ toast('PDF చదవలేకపోయాను — PNG/JPG ఇవ్వండి','err',3600); $('#procStatus').textContent='PDF విఫలమైంది'; }
+    return;
+  }
+  if(!/^image\//.test(file.type)){ toast('PNG, JPG, WEBP లేదా PDF మాత్రమే','warn'); return; }
+  const url=URL.createObjectURL(file);
+  const img=new Image();
+  img.onload=()=>{ setImageFromSource(img,file.name); URL.revokeObjectURL(url); };
+  img.onerror=()=>{ toast('ఈ ఫోటో చదవలేకపోయాను — వేరే ఫైల్ ప్రయత్నించండి','err'); URL.revokeObjectURL(url); };
+  img.src=url;
+}
+$('#dropZone').addEventListener('click',()=>$('#fileInput').click());
+$('#fileInput').addEventListener('change',e=>{ handleFile(e.target.files[0]); e.target.value=''; });
+['dragover','dragenter'].forEach(ev=>$('#dropZone').addEventListener(ev,e=>{ e.preventDefault(); $('#dropZone').classList.add('over'); }));
+['dragleave','drop'].forEach(ev=>$('#dropZone').addEventListener(ev,e=>{ e.preventDefault(); $('#dropZone').classList.remove('over'); }));
+$('#dropZone').addEventListener('drop',e=>{ const f=e.dataTransfer.files&&e.dataTransfer.files[0]; handleFile(f); });
+$('#btnSample').addEventListener('click',()=>{ loadSample(); toast('నమూనా డ్రాయింగ్ లోడ్ అయింది ✨'); });
+
+/* ================= image → ink pipeline ================= */
+function runPipeline(){
+  if(!srcCanvas) return;
+  $('#procStatus').textContent='ప్రాసెస్ అవుతోంది…';
+  requestAnimationFrame(()=>{ setTimeout(()=>{
+    try{
+      procCanvas=processInk(srcCanvas);
+      buildGridAndPayload();
+      refreshThumb(); refreshTexture(); refreshQR(); maybeAutoPublish();
+      const inkPx=countInk(procCanvas);
+      $('#procStatus').innerHTML = inkPx>0
+        ? `సిద్ధం ✓ ${procCanvas.width}×${procCanvas.height}px · QR గ్రిడ్ ${gridData.w}×${gridData.h}`
+        : `<span style="color:var(--am)">గీతలు కనబడలేదు — థ్రెషోల్డ్ పెంచండి లేదా ఇన్వర్ట్ ఆన్ చేయండి</span>`;
+    }catch(e){ $('#procStatus').textContent='ప్రాసెసింగ్ సమస్య — మరో ఫోటో ప్రయత్నించండి'; }
+  },10); });
+}
+function processInk(src){
+  const w=src.width,h=src.height;
+  const sx=src.getContext('2d'); const data=sx.getImageData(0,0,w,h); const d=data.data;
+  /* paper white-point (85th percentile luminance) */
+  const lums=[]; for(let i=0;i<d.length;i+=64){ lums.push((d[i]*3+d[i+1]*6+d[i+2])/10); }
+  lums.sort((a,b)=>a-b); const paper=clamp(lums[Math.floor(lums.length*.85)]||255,170,255); const norm=255/paper;
+  const T=S.thr, alpha=new Uint8ClampedArray(w*h);
+  for(let p=0,i=0;p<w*h;p++,i+=4){
+    let lum=(d[i]*3+d[i+1]*6+d[i+2])/10*norm;
+    const mx=Math.max(d[i],d[i+1],d[i+2]), mn=Math.min(d[i],d[i+1],d[i+2]); const sat=mx-mn;
+    if(S.inv) lum=255-lum;
+    let a=clamp((T-lum)*6,0,255);
+    if(!S.inv && sat>70) a=Math.max(a, clamp((T+50-lum)*6,0,255));
+    alpha[p]=a;
+  }
+  if(S.den>0){
+    const cp=alpha.slice();
+    for(let y=1;y<h-1;y++) for(let x=1;x<w-1;x++){
+      const p=y*w+x; if(cp[p]<110) continue;
+      let n=0;
+      if(cp[p-1]>110)n++; if(cp[p+1]>110)n++; if(cp[p-w]>110)n++; if(cp[p+w]>110)n++;
+      if(cp[p-w-1]>110)n++; if(cp[p-w+1]>110)n++; if(cp[p+w-1]>110)n++; if(cp[p+w+1]>110)n++;
+      if(n<S.den) alpha[p]=0;
+    }
+  }
+  let x0=w,y0=h,x1=0,y1=0,found=false;
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){ if(alpha[y*w+x]>40){ found=true; if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; } }
+  if(!found){ x0=0;y0=0;x1=w-1;y1=h-1; }
+  const mg=Math.round(Math.max(x1-x0,y1-y0)*.06)+4;
+  x0=clamp(x0-mg,0,w-1); y0=clamp(y0-mg,0,h-1); x1=clamp(x1+mg,0,w-1); y1=clamp(y1+mg,0,h-1);
+  const cw=x1-x0+1, ch=y1-y0+1;
+  const out=document.createElement('canvas'); out.width=cw; out.height=ch;
+  const ox=out.getContext('2d'); const od=ox.createImageData(cw,ch); const o=od.data;
+  const [r,g,b]=hexRGB(S.ink);
+  for(let y=0;y<ch;y++) for(let x=0;x<cw;x++){
+    const a=alpha[(y+y0)*w+(x+x0)], j=(y*cw+x)*4;
+    o[j]=r; o[j+1]=g; o[j+2]=b; o[j+3]=a;
+  }
+  ox.putImageData(od,0,0); return out;
+}
+function countInk(c){ const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data; let n=0; for(let i=3;i<d.length;i+=16){ if(d[i]>110)n++; } return n; }
+function refreshThumb(){
+  const c=$('#srcThumb'), x=c.getContext('2d'); x.clearRect(0,0,184,184);
+  const src=(thumbShowProc&&procCanvas)?procCanvas:srcCanvas; if(!src) return;
+  if(thumbShowProc){ x.fillStyle='#fff'; x.fillRect(0,0,184,184); }
+  const s=Math.min(184/src.width,184/src.height);
+  x.drawImage(src,(184-src.width*s)/2,(184-src.height*s)/2,src.width*s,src.height*s);
+}
+$('#thumbMode').addEventListener('click',()=>{ thumbShowProc=!thumbShowProc; refreshThumb(); });
+
+/* ================= grid + payload codec (drawing lives inside the QR) ================= */
+function makeGrid(L){
+  const pw=procCanvas.width, ph=procCanvas.height;
+  let w,h; if(pw>=ph){ w=L; h=Math.max(8,Math.round(L*ph/pw)); } else { h=L; w=Math.max(8,Math.round(L*pw/ph)); }
+  const c=document.createElement('canvas'); c.width=w; c.height=h;
+  const x=c.getContext('2d'); x.drawImage(procCanvas,0,0,w,h);
+  const d=x.getImageData(0,0,w,h).data; const bits=new Uint8Array(w*h);
+  for(let i=0;i<w*h;i++) bits[i]=d[i*4+3]>100?1:0;
+  return {w,h,bits};
+}
+function packRaw(bits){ const out=new Uint8Array(Math.ceil(bits.length/8)); for(let i=0;i<bits.length;i++) if(bits[i]) out[i>>3]|=128>>(i&7); return out; }
+function packRLE(bits){
+  const out=[]; let cur=0,run=0;
+  const flush=r=>{ while(r>=255){ out.push(255); r-=255; } out.push(r); };
+  for(let i=0;i<bits.length;i++){ const b=bits[i]; if(b===cur) run++; else { flush(run); cur=b; run=1; } }
+  flush(run); return Uint8Array.from(out);
+}
+function b64url(bytes){ let s=''; for(let i=0;i<bytes.length;i++) s+=String.fromCharCode(bytes[i]); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function fromB64url(str){ str=str.replace(/-/g,'+').replace(/_/g,'/'); while(str.length%4)str+='='; const s=atob(str); const out=new Uint8Array(s.length); for(let i=0;i<s.length;i++)out[i]=s.charCodeAt(i); return out; }
+function nearestInkIdx(hex){ const [r,g,b]=hexRGB(hex); let best=0,bd=1e9; INKS.forEach((c,i)=>{ const [R,G,B]=hexRGB(c); const d=(r-R)**2+(g-G)**2+(b-B)**2; if(d<bd){bd=d;best=i;} }); return best; }
+function baseUrl(){ const v=$('#baseUrl').value.trim(); return v || location.href.split('#')[0]; }
+function buildGridAndPayload(){
+  if(!procCanvas) return;
+  const ladders={ easy:[72,64,56,48], balanced:[96,88,80,72,64,56,48], high:[128,120,112,104,96,88,80,72,64,56,48] };
+  const caps={ easy:97, balanced:117, high:145 };
+  const qk=S.quality==='cloud'?'easy':S.quality;
+  const ladder=ladders[qk], cap=caps[qk], inkIdx=nearestInkIdx(S.ink);
+  const base=baseUrl().split('#')[0];
+  let chosen=null;
+  for(const L of ladder){
+    const g=makeGrid(L);
+    const raw=packRaw(g.bits), rle=packRLE(g.bits);
+    const useRle=rle.length<raw.length, body=useRle?rle:raw;
+    const bytes=new Uint8Array(3+body.length);
+    bytes[0]=0x80|(useRle?0x40:0)|inkIdx; bytes[1]=g.w; bytes[2]=g.h; bytes.set(body,3);
+    const pl=b64url(bytes), link=base+'#d='+pl;
+    try{
+      const q=qrcode(0,'M'); q.addData(link); q.make();
+      const n=q.getModuleCount();
+      chosen={g,pl,link,n,bytes:bytes.length};
+      if(n<=cap) break;
+    }catch(e){ chosen=null; }
+  }
+  if(!chosen){ $('#procStatus').textContent='లింక్ చాలా పొడవు — బేస్ URL చిన్నది ఇవ్వండి'; return; }
+  gridData=chosen.g; payload=chosen.pl; inlineLink=chosen.link; qrN=chosen.n;
+  $('#linkOut').value=fullLink;
+  $('#qrBytes').textContent=`డ్రాయింగ్ డేటా: ${chosen.bytes} B · గ్రిడ్ ${chosen.g.w}×${chosen.g.h}`;
+  updateLink();
+  if(S.qrPrev) refreshTexture();
+}
+function gridToCanvas(g,inkHex,size){
+  const cell=document.createElement('canvas'); cell.width=g.w; cell.height=g.h;
+  const cx=cell.getContext('2d'); const id=cx.createImageData(g.w,g.h); const [r,gr,b]=hexRGB(inkHex);
+  for(let i=0;i<g.w*g.h;i++){ const j=i*4; id.data[j]=r; id.data[j+1]=gr; id.data[j+2]=b; id.data[j+3]=g.bits[i]?255:0; }
+  cx.putImageData(id,0,0);
+  const out=document.createElement('canvas');
+  const sc=size/Math.max(g.w,g.h); out.width=Math.max(2,Math.round(g.w*sc)); out.height=Math.max(2,Math.round(g.h*sc));
+  const ox=out.getContext('2d'); ox.imageSmoothingEnabled=true; ox.imageSmoothingQuality='high';
+  ox.drawImage(cell,0,0,out.width,out.height);
+  return out;
+}
+function decodePayload(pl){
+  const bytes=fromB64url(pl);
+  if(!(bytes[0]&0x80)) throw new Error('bad');
+  const useRle=!!(bytes[0]&0x40), inkIdx=bytes[0]&7, w=bytes[1], h=bytes[2];
+  if(!w||!h) throw new Error('bad');
+  const bits=new Uint8Array(w*h);
+  if(useRle){ let cur=0,p=0; for(let i=3;i<bytes.length;i++){ const len=bytes[i]; for(let k=0;k<len&&p<bits.length;k++) bits[p++]=cur; if(len!==255) cur^=1; } }
+  else { for(let i=0;i<bits.length;i++){ const b=bytes[3+(i>>3)]; if(b===undefined)break; bits[i]=(b>>(7-(i&7)))&1; } }
+  return { g:{w,h,bits}, ink:INKS[inkIdx]||INKS[0] };
+}
+
+/* ================= plain QR (Google Lens friendly) ================= */
+function renderQR(canvas,url,px){
+  const q=qrcode(0,ecFor(url)); q.addData(url); q.make();
+  const n=q.getModuleCount(), quiet=4, total=n+quiet*2, u=Math.max(1,Math.floor(px/total)), real=u*total;
+  canvas.width=canvas.height=real;
+  const x=canvas.getContext('2d');
+  x.fillStyle='#FFFFFF'; x.fillRect(0,0,real,real); x.fillStyle='#000000';
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(q.isDark(r,c)) x.fillRect((c+quiet)*u,(r+quiet)*u,u,u);
+  return n;
+}
+function renderQRSVG(url,px){
+  const q=qrcode(0,ecFor(url)); q.addData(url); q.make();
+  const n=q.getModuleCount(), quiet=4, total=n+quiet*2, u=px/total;
+  let rects='';
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(q.isDark(r,c)) rects+=`<rect x="${((c+quiet)*u).toFixed(2)}" y="${((r+quiet)*u).toFixed(2)}" width="${(u+.04).toFixed(2)}" height="${(u+.04).toFixed(2)}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="0 0 ${px} ${px}"><rect width="${px}" height="${px}" fill="#fff"/><g fill="#000">${rects}</g></svg>`;
+}
+function refreshQR(){
+  if(!fullLink) return;
+  try{
+    const n=renderQR($('#qrCanvas'),fullLink,840);
+    const v=(n-17)/4;
+    $('#qrMeta').textContent=`వెర్షన్ ${v} · ${n}×${n} మాడ్యూల్స్ · EC-${ecFor(fullLink)} · ప్లెయిన్ బ్లాక్/వైట్`;
+    const ease=$('#qrEase');
+    if(n<=97){ ease.textContent='స్కాన్: చాలా సులభం ✓✓'; ease.style.background='#0B3B2E'; ease.style.color='#2DD4A0'; }
+    else if(n<=117){ ease.textContent='స్కాన్: సులభం ✓'; ease.style.background='#0B3B2E'; ease.style.color='#2DD4A0'; }
+    else { ease.textContent='స్కాన్: పెద్ద ప్రింట్ చేయండి (≥8సెం.మీ)'; ease.style.background='#3B2E0B'; ease.style.color='#FFB020'; }
+  }catch(e){ toast('QR తయారీలో సమస్య — లింక్ పొడవు తగ్గించండి','err'); }
+}
+const rebuildAll=debounce(()=>{ buildGridAndPayload(); refreshQR(); },200);
+$('#baseUrl').addEventListener('input',rebuildAll);
+$('#qrQuality').addEventListener('change',e=>{ S.quality=e.target.value; buildGridAndPayload(); refreshTexture(); refreshQR(); if(S.quality==='cloud'&&!isSample) schedulePublish(); toast('QR నాణ్యత: '+e.target.selectedOptions[0].text); });
+$('#btnQrPng').addEventListener('click',()=>{ if(!fullLink)return; const c=document.createElement('canvas'); renderQR(c,fullLink,1240); download('drawing-3d-qr.png',c.toDataURL('image/png')); toast('ప్లెయిన్ QR PNG డౌన్‌లోడ్ ⬇ Lensతో స్కాన్ చేయండి!','ok'); sndOk(); });
+$('#btnQrSvg').addEventListener('click',()=>{ if(!fullLink)return; download('drawing-3d-qr.svg','data:image/svg+xml;charset=utf-8,'+encodeURIComponent(renderQRSVG(fullLink,1240))); toast('వెక్టార్ SVG డౌన్‌లోడ్ ⬇','ok'); });
+$('#btnCopyLink').addEventListener('click',async()=>{ if(!fullLink)return; try{ await navigator.clipboard.writeText(fullLink); toast('లింక్ కాపీ అయింది 🔗 ఎవరికైనా పంపండి','ok'); ping(900,.08);}catch(e){ $('#linkOut').select(); try{document.execCommand('copy');toast('లింక్ కాపీ అయింది 🔗','ok');}catch(_){toast('కాపీ విఫలమైంది','warn');} } });
+$('#btnOpenViewer').addEventListener('click',()=>{ if(!fullLink)return; const h=fullLink.split('#')[1]||'s'; if(location.hash==='#'+h) applyHash(); else location.hash=h; });
+$('#btnExportPng').addEventListener('click',()=>{ if(!procCanvas)return; download('my-drawing-clean.png',procCanvas.toDataURL('image/png')); toast('శుభ్రమైన డ్రాయింగ్ PNG (పారదర్శక నేపథ్యం) ⬇','ok'); sndOk(); });
+
+/* poster */
+async function renderPoster(){
+  try{ await Promise.all([document.fonts.load('700 84px "Space Grotesk"'),document.fonts.load('700 56px "Anek Telugu"'),document.fonts.load('600 40px "Anek Telugu"')]); }catch(e){}
+  const W=1080,H=1500,c=document.createElement('canvas'); c.width=W;c.height=H; const x=c.getContext('2d');
+  x.fillStyle='#fff'; x.fillRect(0,0,W,H);
+  x.strokeStyle='rgba(29,53,87,.35)'; x.lineWidth=3; x.strokeRect(28,28,W-56,H-56);
+  x.fillStyle='#1D3557'; x.fillRect(28,28,W-56,180);
+  x.fillStyle='#fff'; x.font='700 74px "Space Grotesk", Arial'; x.textBaseline='middle'; x.textAlign='left';
+  x.fillText('DRAWING', 72, 118); const tw=x.measureText('DRAWING').width;
+  x.fillStyle='#33E0FF'; x.fillText('→ 3D', 72+tw+22, 118);
+  x.textAlign='center'; x.fillStyle='#1D3557'; x.font='700 54px "Anek Telugu", sans-serif';
+  x.fillText('ఈ కోడ్‌లో ఒక డ్రాయింగ్ దాగి ఉంది!', W/2, 286);
+  const qc=document.createElement('canvas'); renderQR(qc,fullLink,760);
+  x.drawImage(qc,(W-720)/2,340,720,720);
+  x.fillStyle='#1D3557'; x.font='700 48px "Space Grotesk", Arial'; x.fillText('S C A N   M E', W/2, 1136);
+  x.font='600 38px "Anek Telugu", sans-serif'; x.fillStyle='rgba(29,53,87,.78)';
+  x.fillText('Google Lensతో స్కాన్ చేసి 3Dలో చుట్టూ తిరగండి', W/2, 1200);
+  x.font='500 30px "Anek Telugu", sans-serif'; x.fillStyle='rgba(29,53,87,.6)';
+  x.fillText('① స్కాన్  →  ② తెల్ల సర్ఫేస్ చూపించు  →  ③ ముందు/పక్క/పైన చూడు', W/2, 1272);
+  x.fillStyle='#1D3557'; x.fillRect(28,H-104,W-56,76);
+  x.fillStyle='rgba(255,255,255,.85)'; x.font='500 26px "IBM Plex Mono", monospace';
+  x.fillText('QUALITY MONTH · NO APP · ONE DRAWING · 360°', W/2, H-66);
+  x.textAlign='left'; return c;
+}
+$('#btnPoster').addEventListener('click',async()=>{ if(!fullLink)return; toast('పోస్టర్ రెండర్ అవుతోంది…'); const c=await renderPoster(); download('drawing-3d-poster.png',c.toDataURL('image/png')); toast('పోస్టర్ PNG సిద్ధం 🖨 ప్రింట్ చేయండి!','ok'); sndOk(); });
+
+/* ================= 3D ENGINE ================= */
+const orbit={ th:.5, ph:1.18, r:1.25, tTh:.5, tPh:1.18, tR:1.25, oTh:0, oPh:0, last:0 };
+let gl=null; /* {renderer,scene,camera,obj, layers[], frontMat, backMat, midMat, shadow, paper, gridHelper, tex, backTex, H, W} */
+async function initGL(){
+  try{
+    threePreload=threePreload||import(THREE_URL);
+    T3=await threePreload; if(!T3) throw new Error('load');
+    const wrap=$('#glWrap');
+    const renderer=new T3.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+    renderer.outputColorSpace=T3.SRGBColorSpace;
+    wrap.appendChild(renderer.domElement);
+    const scene=new T3.Scene();
+    const camera=new T3.PerspectiveCamera(45,1,.01,40);
+    scene.add(new T3.HemisphereLight(0xffffff,0xd8e2ec,1.15));
+    const key=new T3.DirectionalLight(0xffffff,1.1); key.position.set(1.6,2.6,1.9); scene.add(key);
+    const rim=new T3.DirectionalLight(0xbfe9ff,.45); rim.position.set(-2,1.4,-1.6); scene.add(rim);
+    /* ground: shadow + paper + grid */
+    const shC=document.createElement('canvas'); shC.width=shC.height=256;
+    const shx=shC.getContext('2d'); const rg=shx.createRadialGradient(128,128,8,128,128,124);
+    rg.addColorStop(0,'rgba(20,32,52,.5)'); rg.addColorStop(.6,'rgba(20,32,52,.18)'); rg.addColorStop(1,'rgba(20,32,52,0)');
+    shx.fillStyle=rg; shx.fillRect(0,0,256,256);
+    const shTex=new T3.CanvasTexture(shC);
+    const shadow=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:shTex,transparent:true,depthWrite:false}));
+    shadow.rotation.x=-Math.PI/2; shadow.position.y=.002; scene.add(shadow);
+    const ppC=document.createElement('canvas'); ppC.width=512; ppC.height=384;
+    const px=ppC.getContext('2d'); px.fillStyle='#FBFAF5'; px.fillRect(0,0,512,384);
+    px.strokeStyle='rgba(29,53,87,.14)'; px.lineWidth=4; px.strokeRect(6,6,500,372);
+    px.strokeStyle='rgba(29,53,87,.05)'; px.lineWidth=1;
+    for(let i=1;i<8;i++){ px.beginPath(); px.moveTo(0,i*48); px.lineTo(512,i*48); px.stroke(); }
+    const ppTex=new T3.CanvasTexture(ppC); ppTex.colorSpace=T3.SRGBColorSpace;
+    const paper=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:ppTex}));
+    paper.rotation.x=-Math.PI/2; paper.position.y=.001; scene.add(paper);
+    const gridHelper=new T3.GridHelper(4,24,0x9db8cc,0xc9d8e4); gridHelper.position.y=.0005; gridHelper.visible=false; scene.add(gridHelper);
+    /* గోడ + పోస్టర్ బోర్డ్ + గోడ మీద నీడ */
+    const wall=new T3.Mesh(new T3.PlaneGeometry(26,16),new T3.MeshBasicMaterial({color:0xE9EDF3}));
+    wall.visible=false; scene.add(wall);
+    const bdC=document.createElement('canvas'); bdC.width=512; bdC.height=660;
+    const bdx=bdC.getContext('2d'); bdx.fillStyle='#FFFFFF'; bdx.fillRect(0,0,512,660);
+    bdx.fillStyle='#1D3557'; bdx.fillRect(0,0,512,74);
+    bdx.fillStyle='#FFFFFF'; bdx.font='700 34px "Space Grotesk",Arial,sans-serif'; bdx.textAlign='center'; bdx.textBaseline='middle'; bdx.fillText('QUALITY MONTH',256,39);
+    bdx.strokeStyle='rgba(29,53,87,.3)'; bdx.lineWidth=6; bdx.strokeRect(3,3,506,654);
+    bdx.fillStyle='rgba(29,53,87,.55)'; bdx.font='600 20px "IBM Plex Mono",monospace'; bdx.fillText('DRAWING  →  3D',256,628);
+    const bdTex=new T3.CanvasTexture(bdC); bdTex.colorSpace=T3.SRGBColorSpace;
+    const board=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:bdTex,transparent:true}));
+    board.renderOrder=1; board.visible=false; scene.add(board);
+    const wallShadow=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:shTex,transparent:true,depthWrite:false,opacity:.8}));
+    wallShadow.renderOrder=2; wallShadow.visible=false; scene.add(wallShadow);
+    /* extruded standee */
+    const obj=new T3.Group(); scene.add(obj);
+    const N=14, layers=[], geo=new T3.PlaneGeometry(1,1);
+    const frontMat=new T3.MeshLambertMaterial({alphaTest:.4,side:T3.FrontSide});
+    const midMat=new T3.MeshLambertMaterial({alphaTest:.4,side:T3.DoubleSide,color:0x8f97a6});
+    const backMat=new T3.MeshLambertMaterial({alphaTest:.4,side:T3.FrontSide});
+    for(let i=0;i<N;i++){
+      const m=new T3.Mesh(geo, i===N-1?frontMat : i===0?backMat : midMat);
+      if(i===0) m.rotation.y=Math.PI;
+      obj.add(m); layers.push(m);
+    }
+    gl={renderer,scene,camera,obj,layers,frontMat,midMat,backMat,shadow,paper,gridHelper,wall,board,wallShadow,N,H:.5,W:.5,baseY:0,geo};
+    glReady=true; $('#glLoading').hidden=true;
+    applyEnv(); refreshTexture(); bindGLInput(renderer.domElement);
+    new ResizeObserver(resizeGL).observe(wrap);
+    resizeGL();
+    resumeOrbitLoop();
+    checkXR();
+  }catch(e){
+    glFail=true; $('#glLoading').hidden=true; $('#glFallback').hidden=false; refreshFallback();
+    toast('3D ఇంజిన్ లోడ్ కాలేదు — 2D ప్రివ్యూ చూపుతున్నాను (QR పనిచేస్తుంది)','warn',4200);
+    bindFallbackInput();
+  }
+}
+function resizeGL(){
+  if(!gl) return;
+  const w=$('#glWrap'), r=w.getBoundingClientRect();
+  if(r.width<2||r.height<2) return;
+  gl.renderer.setSize(r.width,r.height,false);
+  gl.camera.aspect=r.width/r.height; gl.camera.updateProjectionMatrix();
+}
+function currentArtCanvas(){
+  if(S.qrPrev&&gridData) return gridToCanvas(gridData,S.ink,760);
+  return procCanvas;
+}
+function refreshTexture(){
+  if(glFail){ refreshFallback(); return; }
+  if(!gl||!procCanvas) return;
+  const art=currentArtCanvas(); if(!art) return;
+  if(gl.tex) gl.tex.dispose(); if(gl.backTex) gl.backTex.dispose();
+  const tex=new T3.CanvasTexture(art); tex.colorSpace=T3.SRGBColorSpace; tex.anisotropy=4;
+  const bc=document.createElement('canvas'); bc.width=art.width; bc.height=art.height;
+  const bx=bc.getContext('2d'); bx.fillStyle='#F2EEE3'; bx.fillRect(0,0,bc.width,bc.height);
+  bx.globalAlpha=.14; bx.translate(bc.width,0); bx.scale(-1,1); bx.drawImage(art,0,0); 
+  const backTex=new T3.CanvasTexture(bc); backTex.colorSpace=T3.SRGBColorSpace;
+  gl.tex=tex; gl.backTex=backTex;
+  gl.frontMat.map=tex; gl.frontMat.needsUpdate=true;
+  gl.midMat.map=tex; gl.midMat.needsUpdate=true;
+  gl.backMat.map=backTex; gl.backMat.needsUpdate=true;
+  layoutObject();
+  $('#dimChip').textContent=`ఎత్తు ${(gl.H*100).toFixed(0)} సెం.మీ · మందం ${S.thick} మి.మీ`;
+}
+function layoutObject(){
+  if(!gl) return;
+  const art=(S.qrPrev&&gridData)?gridData:procCanvas; if(!art) return;
+  const aw=art.width||art.w||1, ah=art.height||art.h||1;   /* canvas లేదా grid — రెండింటికీ సరైన నిష్పత్తి */
+  const aspect=clamp(aw/ah,.15,6);
+  const flat=S.surface==='paper';
+  gl.H=.5*(S.size/100)*(S.surface==='poster'?.82:1); gl.W=gl.H*aspect;
+  const t=S.thick/1000;
+  gl.layers.forEach((m,i)=>{
+    m.scale.set(gl.W,gl.H,1);
+    m.position.set(0,gl.H/2, -t/2 + t*i/(gl.N-1));
+  });
+  /* పేపర్: నేల మీద నిలబడుతుంది · గోడ/పోస్టర్: నిలువు సర్ఫేస్‌కు అతుక్కుని బయటికి వస్తుంది */
+  const lift=flat?0:gl.H*.3, cy=lift+gl.H/2;
+  gl.baseY=lift;
+  if(!gl.renderer.xr.isPresenting){ gl.obj.position.set(0,lift,flat?0:t/2+.004); gl.obj.rotation.set(0,0,0); gl.obj.scale.setScalar(1); }
+  gl.shadow.scale.set(gl.W*1.5,gl.W*.9,1);
+  gl.paper.scale.set(Math.max(gl.W*1.45,.6),Math.max(gl.W*1.05,.45),1);
+  gl.wall.position.set(0,cy,0);
+  gl.board.position.set(0,cy,.001); gl.board.scale.set(Math.max(gl.W*1.5,gl.H*1.15),gl.H*1.62,1);
+  gl.wallShadow.position.set(gl.W*.05,cy-gl.H*.06,.0016); gl.wallShadow.scale.set(gl.W*1.55,gl.H*1.42,1);
+  orbit.tR=clamp(orbit.tR, gl.H*1.1, gl.H*6);
+  $('#dimChip').textContent=`ఎత్తు ${(gl.H*100).toFixed(0)} సెం.మీ · మందం ${S.thick} మి.మీ`;
+}
+function applyEnv(){
+  const cam=S.bg==='camera';
+  $('#camVideo').hidden=!cam;
+  $('#bgWhite').classList.toggle('on',!cam); $('#bgCam').classList.toggle('on',cam);
+  $('#vBgLabel').textContent=cam?'తెలుపు':'కెమెరా';
+  $('#vBg').classList.toggle('on',cam);
+  if(!gl||gl.renderer.xr.isPresenting) return;   /* AR సెషన్‌లో నిజమైన గది కనిపించాలి — స్టూడియో గోడ కాదు */
+  gl.scene.background=cam?null:new T3.Color(0xF2F5F9);
+  gl.scene.fog=cam?null:new T3.Fog(0xF2F5F9,3.2,8);
+  const flat=S.surface==='paper';
+  gl.paper.visible=S.paper&&flat&&!cam;   /* కెమెరా మోడ్‌లో వర్చువల్ కాగితం వద్దు — నిజమైన సర్ఫేస్ కనిపించాలి */
+  gl.shadow.visible=S.shadow&&flat; gl.shadow.material.opacity=cam?.55:1;
+  gl.gridHelper.visible=S.grid&&!cam&&flat;
+  gl.wall.visible=!flat&&!cam;
+  gl.board.visible=S.surface==='poster'; gl.board.material.opacity=cam?.42:1;
+  gl.wallShadow.visible=S.shadow&&!flat; gl.wallShadow.material.opacity=cam?.5:.8;
+}
+function bindGLInput(cv){
+  const pts=new Map(); let drag=false,lx=0,ly=0,pinch0=0,r0=0;
+  cv.addEventListener('pointerdown',e=>{ cv.setPointerCapture(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); orbit.last=performance.now();
+    if(pts.size===1){ drag=true; lx=e.clientX; ly=e.clientY; }
+    if(pts.size===2){ const a=[...pts.values()]; pinch0=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y); r0=orbit.tR; } });
+  cv.addEventListener('pointermove',e=>{ if(!pts.has(e.pointerId))return; pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); orbit.last=performance.now();
+    if(pts.size===2&&pinch0>0){ const a=[...pts.values()]; const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y); orbit.tR=clamp(r0*pinch0/Math.max(20,d), gl.H*1.05, gl.H*6.5); }
+    else if(drag){ orbit.tTh-=(e.clientX-lx)*.008; orbit.tPh=clamp(orbit.tPh-(e.clientY-ly)*.006,.08,1.5); lx=e.clientX; ly=e.clientY; } });
+  const up=e=>{ pts.delete(e.pointerId); if(pts.size<2)pinch0=0; if(pts.size===0)drag=false; };
+  cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
+  cv.addEventListener('wheel',e=>{ e.preventDefault(); orbit.last=performance.now(); orbit.tR=clamp(orbit.tR*(1+e.deltaY*.0012), gl.H*1.05, gl.H*6.5); },{passive:false});
+  window.addEventListener('keydown',e=>{
+    if(S.mode!=='viewer'&&document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
+    if(e.key==='ArrowLeft'){e.preventDefault();orbit.tTh+=.15;orbit.last=performance.now();}
+    if(e.key==='ArrowRight'){e.preventDefault();orbit.tTh-=.15;orbit.last=performance.now();}
+    if(e.key==='ArrowUp'){e.preventDefault();orbit.tPh=clamp(orbit.tPh-.1,.08,1.5);orbit.last=performance.now();}
+    if(e.key==='ArrowDown'){e.preventDefault();orbit.tPh=clamp(orbit.tPh+.1,.08,1.5);orbit.last=performance.now();}
+  });
+}
+function refreshFallback(){
+  const art=currentArtCanvas(); if(!art)return;
+  const img=$('#glFallback'); img.hidden=!glFail; img.src=art.toDataURL('image/png');
+  $('#glWrap').style.background=S.bg==='camera'?'#000':'linear-gradient(180deg,#F4F7FB,#E7EDF4)';
+}
+function bindFallbackInput(){
+  let rx=-8,ry=14,dragF=false,sx=0,sy=0;
+  const w=$('#glWrap');
+  w.addEventListener('pointerdown',e=>{dragF=true;sx=e.clientX;sy=e.clientY;});
+  w.addEventListener('pointermove',e=>{ if(!dragF)return; ry+=(e.clientX-sx)*.4; rx=clamp(rx-(e.clientY-sy)*.3,-60,60); sx=e.clientX;sy=e.clientY; $('#glFallback').style.transform=`perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg)`; });
+  w.addEventListener('pointerup',()=>dragF=false);
+}
+function setView(name){
+  orbit.last=performance.now();
+  if(name==='front'){ orbit.tTh=0; orbit.tPh=1.22; }
+  if(name==='side'){ orbit.tTh=Math.PI/2; orbit.tPh=1.18; }
+  if(name==='top'){ orbit.tPh=.12; }
+  orbit.tR=gl?gl.H*2.5:1.25;
+  ping(760,.07);
+  if(glFail){ const map={front:[0,0],side:[-6,78],top:[-58,10]}; const m=name==='top'?map.top:map[name]; $('#glFallback').style.transform=`perspective(800px) rotateX(${m[0]}deg) rotateY(${m[1]}deg)`; }
+}
+['Front','Side','Top'].forEach(n=>{
+  $('#preset'+n).addEventListener('click',()=>setView(n.toLowerCase()));
+  $('#v'+n).addEventListener('click',()=>setView(n.toLowerCase()));
+});
+
+/* ================= camera + motion ================= */
+let camStream=null, motionOn=false, motionBase=null;
+async function enableCamera(){
+  if(camStream){ S.bg='camera'; applyEnv(); refreshFallback(); return true; }
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ toast('కెమెరా అందుబాటులో లేదు — తెల్ల స్టూడియోలో చూడండి','warn'); return false; }
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false});
+    const v=$('#camVideo'); v.srcObject=camStream; try{await v.play();}catch(e){}
+    S.bg='camera'; applyEnv(); refreshFallback(); sndOk();
+    toast('కెమెరా ఆన్ ✓ ఫోన్ కదిలిస్తే డ్రాయింగ్ కోణం మారుతుంది','ok');
+    maybeAskMotion(); return true;
+  }catch(e){ toast('కెమెరా అనుమతి లభించలేదు — తెల్ల స్టూడియోలో కొనసాగండి','err',3600); S.bg='white'; applyEnv(); return false; }
+}
+function disableCamera(){
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; $('#camVideo').srcObject=null; }
+  S.bg='white'; applyEnv(); refreshFallback();
+}
+function motionHandler(e){
+  if(e.gamma==null&&e.beta==null)return;
+  if(!motionBase) motionBase={g:e.gamma||0,b:e.beta||45};
+  const dg=clamp((e.gamma||0)-motionBase.g,-42,42), db=clamp((e.beta||45)-motionBase.b,-38,38);
+  orbit.oTh+=((-dg*Math.PI/180*1.15)-orbit.oTh)*.15;
+  orbit.oPh+=((-db*Math.PI/180*.8)-orbit.oPh)*.15;
+}
+function attachMotion(){
+  if(motionOn)return; motionOn=true; motionBase=null;
+  window.addEventListener('deviceorientation',motionHandler);
+  $('#motionBtn').hidden=true; $('#vMotion').hidden=true;
+  toast('మోషన్ ఆన్ 🧭 ఫోన్ తిప్పితే డ్రాయింగ్ చుట్టూ తిరుగుతుంది','ok');
+}
+function maybeAskMotion(){
+  if(motionOn)return;
+  if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){ $('#motionBtn').hidden=false; $('#vMotion').hidden=false; }
+  else if(typeof DeviceOrientationEvent!=='undefined'){ attachMotion(); }
+}
+$('#motionBtn').addEventListener('click',async()=>{ try{ const p=await DeviceOrientationEvent.requestPermission(); if(p==='granted')attachMotion(); else toast('మోషన్ అనుమతి లభించలేదు','warn'); }catch(e){ toast('మోషన్ అనుమతి లభించలేదు','warn'); } });
+$('#vMotion').addEventListener('click',()=>$('#motionBtn').click());
+$('#bgCam').addEventListener('click',enableCamera);
+$('#bgWhite').addEventListener('click',()=>{ disableCamera(); });
+$('#vBg').addEventListener('click',()=>{ S.bg==='camera'?disableCamera():enableCamera(); });
+
+/* snapshot */
+function snapshot(){
+  const wrap=$('#glWrap'), r=wrap.getBoundingClientRect();
+  const W=Math.min(1600,Math.round(r.width*2)), H=Math.round(W*r.height/r.width);
+  const c=document.createElement('canvas'); c.width=W;c.height=H; const x=c.getContext('2d');
+  const v=$('#camVideo');
+  if(S.bg==='camera'&&v.videoWidth){ const s=Math.max(W/v.videoWidth,H/v.videoHeight); const dw=v.videoWidth*s,dh=v.videoHeight*s; x.drawImage(v,(W-dw)/2,(H-dh)/2,dw,dh); }
+  else { const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,'#F4F7FB'); g.addColorStop(1,'#E7EDF4'); x.fillStyle=g; x.fillRect(0,0,W,H); }
+  if(gl) x.drawImage(gl.renderer.domElement,0,0,W,H);
+  else { const img=$('#glFallback'); if(img.src){ const s=Math.min(W*.7/img.naturalWidth,H*.7/img.naturalHeight); x.drawImage(img,(W-img.naturalWidth*s)/2,(H-img.naturalHeight*s)/2,img.naturalWidth*s,img.naturalHeight*s); } }
+  x.fillStyle='rgba(29,53,87,.8)'; x.font=`600 ${Math.round(W*.018)}px "IBM Plex Mono",monospace`;
+  x.fillText('DRAWING → 3D · QUALITY MONTH',W*.03,H*.96);
+  download('my-drawing-3d.png',c.toDataURL('image/png')); sndSnap(); toast('3D ఫోటో సేవ్ అయింది 📸','ok');
+}
+$('#shotBtn').addEventListener('click',snapshot);
+$('#vShot').addEventListener('click',snapshot);
+
+/* ================= WebXR true surface placement ================= */
+let xrSupported=false, xrSession=null, exitAfterXR=false, xrFrame=null;
+async function checkXR(){
+  try{ xrSupported=!!(navigator.xr&&await navigator.xr.isSessionSupported('immersive-ar')); }catch(e){ xrSupported=false; }
+  if(xrSupported){ $('#vXR').hidden=false; }   /* పేపర్/గోడ/పోస్టర్ బటన్లే నేరుగా నిజమైన AR మొదలుపెడతాయి */
+}
+$('#vXR').addEventListener('click',startXR);
+$('#askXR').addEventListener('click',()=>{ $('#askCard').hidden=true; startXR(); });
+/* నిజమైన AR: ఫోన్ సర్ఫేస్‌ను గుర్తిస్తుంది, డ్రాయింగ్ ఆ చోటికే అతుక్కుంటుంది; కెమెరా కదిపితే ముందు/పక్క/వెనుక కనిపిస్తాయి */
+async function startXR(){
+  if(!gl||glFail||xrBusy||!navigator.xr) return false;
+  xrBusy=true;
+  if(camStream) disableCamera();                 /* AR ఇంజిన్‌కు కెమెరా ఖాళీగా ఉండాలి */
+  let session=null, hitSource=null, reticle=null, rMat=null, controller=null, onSel=null;
+  try{
+    session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test'],optionalFeatures:['dom-overlay','anchors'],domOverlay:{root:$('#viewerRoot')}});
+    xrSession=session;
+    const hint=$('#vHint');
+    session.addEventListener('end',()=>{
+      xrFrame=null; xrApi=null;
+      try{ if(hitSource) hitSource.cancel(); }catch(e){}
+      if(controller&&onSel) controller.removeEventListener('select',onSel);
+      setTimeout(()=>{            /* three.js తన సెషన్-ముగింపు పని పూర్తి చేశాక స్టూడియో స్థితిని తిరిగి తెస్తాం */
+        if(reticle){ gl.scene.remove(reticle); reticle.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); }
+        if(rMat) rMat.dispose();
+        if(controller) gl.scene.remove(controller);
+        gl.renderer.xr.enabled=false;
+        gl.obj.visible=true; gl.obj.rotation.set(0,0,0);
+        gl.shadow.position.set(0,.002,0); gl.wallShadow.rotation.set(0,0,0);
+        xrSession=null; xrBusy=false;
+        $('#glWrap').style.visibility=''; $('#viewerRoot').classList.remove('xr-on');
+        if(!camStream) S.bg='white';
+        layoutObject(); applyEnv(); resizeGL();
+        hint.textContent=SURF[S.surface].hint;
+        if(exitAfterXR){ exitAfterXR=false; exitViewer(); } else toast('AR ముగిసింది 👋');
+      },60);
+    });
+    $('#glWrap').style.visibility='hidden';      /* పాత ఫ్రేమ్ AR వ్యూను కప్పకుండా */
+    $('#viewerRoot').classList.add('xr-on');
+    $('#arLay').classList.remove('on'); $('#arLayLabel').textContent='పడుకోబెట్టు';
+    gl.scene.background=null; gl.scene.fog=null;
+    gl.paper.visible=false; gl.gridHelper.visible=false; gl.shadow.visible=false;
+    gl.wall.visible=false; gl.board.visible=false; gl.wallShadow.visible=false;
+    gl.obj.visible=false; gl.obj.rotation.order='YXZ';
+    gl.renderer.xr.enabled=true; gl.renderer.xr.setReferenceSpaceType('local');
+    await gl.renderer.xr.setSession(session);
+    rMat=new T3.MeshBasicMaterial({color:0x12B7D8,transparent:true,opacity:.95,side:T3.DoubleSide});
+    reticle=new T3.Group(); reticle.matrixAutoUpdate=false; reticle.visible=false;
+    reticle.add(new T3.Mesh(new T3.RingGeometry(.055,.07,40).rotateX(-Math.PI/2),rMat), new T3.Mesh(new T3.CircleGeometry(.009,16).rotateX(-Math.PI/2),rMat));
+    gl.scene.add(reticle);
+    const viewerSpace=await session.requestReferenceSpace('viewer');
+    hitSource=await session.requestHitTestSource({space:viewerSpace});
+
+    const P=new T3.Vector3(), Nn=new T3.Vector3(), camP=new T3.Vector3(), placedM=new T3.Matrix4();
+    const baseH=S.surface==='wall'?.45:S.surface==='poster'?.3:.22;      /* నిజ ప్రపంచంలో డ్రాయింగ్ ఎత్తు (మీటర్లు) */
+    let anchor=null, placed=false, wantPlace=false, placeTok=0, yaw0=0, arYaw=0, arScale=1, lay=false, seenAt=0;
+    hint.textContent=S.surface==='paper'
+      ? 'పేపర్ / టేబుల్ వైపు ఫోన్ చూపి, నెమ్మదిగా అటూ ఇటూ కదపండి…'
+      : 'గోడ / పోస్టర్ వైపు ఫోన్ చూపి, నెమ్మదిగా అటూ ఇటూ కదపండి…';
+
+    function applyPlacement(){
+      const e=placedM.elements;
+      P.setFromMatrixPosition(placedM); Nn.set(e[4],e[5],e[6]).normalize();
+      const sc=(baseH/gl.H)*arScale, t=S.thick/1000*sc;
+      gl.obj.scale.setScalar(sc); gl.obj.position.copy(P);
+      if(Math.abs(Nn.y)<.55){
+        /* నిలువు సర్ఫేస్ (గోడ / పోస్టర్): గోడకు అతికించి, బయటి వైపు ముఖం */
+        const ry=Math.atan2(Nn.x,Nn.z);
+        gl.obj.rotation.set(0,ry,0);
+        gl.obj.position.addScaledVector(Nn,t/2+.004); gl.obj.position.y-=gl.H*sc/2;
+        gl.wallShadow.position.copy(P).addScaledVector(Nn,.002); gl.wallShadow.rotation.set(0,ry,0);
+        gl.wallShadow.scale.set(gl.W*1.55*sc,gl.H*1.42*sc,1); gl.wallShadow.material.opacity=.55; gl.wallShadow.visible=S.shadow;
+        gl.shadow.visible=false;
+      } else {
+        /* అడ్డ సర్ఫేస్ (పేపర్ / టేబుల్): నిలబెట్టు లేదా సర్ఫేస్‌పై పడుకోబెట్టు */
+        const yaw=yaw0+arYaw, big=Math.max(gl.W,gl.H);
+        if(lay){
+          gl.obj.rotation.set(-Math.PI/2,yaw,0);
+          gl.obj.position.set(P.x+Math.sin(yaw)*gl.H*sc/2, P.y+t/2+.003, P.z+Math.cos(yaw)*gl.H*sc/2);
+          gl.shadow.scale.set(big*1.35*sc,big*1.35*sc,1);
+        } else {
+          gl.obj.rotation.set(0,yaw,0);
+          gl.shadow.scale.set(gl.W*1.5*sc,gl.W*.9*sc,1);
+        }
+        gl.shadow.position.set(P.x,P.y+.002,P.z); gl.shadow.material.opacity=.6; gl.shadow.visible=S.shadow;
+        gl.wallShadow.visible=false;
+      }
+      gl.obj.visible=true;
+    }
+    function place(hit){
+      placedM.copy(reticle.matrix);
+      P.setFromMatrixPosition(placedM);
+      yaw0=Math.atan2(camP.x-P.x, camP.z-P.z); arYaw=0;          /* డ్రాయింగ్ ముఖం యూజర్ వైపు */
+      const tok=++placeTok;
+      if(anchor){ try{ anchor.delete(); }catch(e){} anchor=null; }
+      if(hit&&hit.createAnchor){                                   /* యాంకర్: ఫోన్ కదిలినా డ్రాయింగ్ అదే చోట స్థిరంగా */
+        try{ hit.createAnchor().then(a=>{ if(tok===placeTok) anchor=a; else { try{ a.delete(); }catch(e){} } }).catch(()=>{}); }catch(e){}
+      }
+      applyPlacement();
+      if(!placed){ placed=true; rMat.opacity=.4; }
+      hint.textContent='అతికించాను ✓ ఇప్పుడు ఫోన్‌తో చుట్టూ తిరిగి చూడండి · వేరే చోటికి: అక్కడ చూపి ట్యాప్ చేయండి';
+      sndOk();
+    }
+    controller=gl.renderer.xr.getController(0);
+    onSel=()=>{ wantPlace=true; };
+    controller.addEventListener('select',onSel); gl.scene.add(controller);
+
+    xrFrame=(t,frame)=>{
+      const ref=gl.renderer.xr.getReferenceSpace(); if(!ref) return;
+      const vp=frame.getViewerPose(ref);
+      if(vp){ const q=vp.transform.position; camP.set(q.x,q.y,q.z); }
+      const hits=frame.getHitTestResults(hitSource);
+      const pose=hits.length?hits[0].getPose(ref):null;
+      if(pose){
+        reticle.visible=true; reticle.matrix.fromArray(pose.transform.matrix);
+        if(!seenAt) seenAt=t;
+        if(!placed) hint.textContent='సర్ఫేస్ దొరికింది ✓ అతికిస్తున్నాను…';
+        if(wantPlace||(!placed&&t-seenAt>900)){ wantPlace=false; place(hits[0]); }
+      } else {
+        reticle.visible=false; seenAt=0;
+        if(wantPlace){ wantPlace=false; hint.textContent='ఇక్కడ సర్ఫేస్ దొరకలేదు — ఫోన్ కొంచెం కదిపి మళ్లీ ట్యాప్ చేయండి'; }
+      }
+      if(anchor&&placed){
+        try{ const ap=frame.getPose(anchor.anchorSpace,ref); if(ap){ placedM.fromArray(ap.transform.matrix); applyPlacement(); } }catch(e){}
+      }
+    };
+    xrApi={
+      place(){ wantPlace=true; },
+      scale(f){ arScale=clamp(arScale*f,.35,4); if(placed) applyPlacement(); },
+      rotate(){ arYaw+=Math.PI/6; if(placed) applyPlacement(); },
+      lay(){ lay=!lay; if(placed) applyPlacement(); return lay; },
+      end(){ try{ session.end(); }catch(e){} }
+    };
+    return true;
+  }catch(e){
+    if(session){ try{ session.end(); }catch(_){} }       /* 'end' లిజనర్ స్థితిని తిరిగి తెస్తుంది */
+    else { xrSession=null; xrBusy=false; }
+    $('#glWrap').style.visibility=''; $('#viewerRoot').classList.remove('xr-on');
+    toast('నిజమైన AR ప్రారంభం కాలేదు — కెమెరా మోడ్‌కు మారుతున్నాను','warn',3600);
+    return false;
+  }
+}
+$('#arMinus').addEventListener('click',()=>{ if(xrApi) xrApi.scale(1/1.2); });
+$('#arPlus').addEventListener('click',()=>{ if(xrApi) xrApi.scale(1.2); });
+$('#arRot').addEventListener('click',()=>{ if(xrApi) xrApi.rotate(); });
+$('#arLay').addEventListener('click',()=>{ if(!xrApi) return; const l=xrApi.lay(); $('#arLay').classList.toggle('on',l); $('#arLayLabel').textContent=l?'నిలబెట్టు':'పడుకోబెట్టు'; });
+$('#arMove').addEventListener('click',()=>{ if(xrApi) xrApi.place(); });
+$('#arExit').addEventListener('click',()=>{ if(xrApi) xrApi.end(); });
+function resumeOrbitLoop(){
+  if(!gl)return;
+  let prev=performance.now();
+  gl.renderer.setAnimationLoop((t,frame)=>{
+    const dt=Math.min(.05,(t-prev)/1000); prev=t;
+    if(gl.renderer.xr.isPresenting){ if(!frame) return; if(xrFrame) xrFrame(t,frame); }   /* నిజమైన AR ఫ్రేమ్ */
+    else {
+      const flat=S.surface==='paper';
+      if(S.spin>0&&t-orbit.last>2600){ if(flat) orbit.tTh+=S.spin*.012*dt*8; else orbit.tTh=Math.sin(t*.00008*S.spin)*.62; }
+      if(!flat) orbit.tTh=clamp(orbit.tTh,-1.3,1.3);
+      orbit.th+=(orbit.tTh-orbit.th)*.12; orbit.ph+=(orbit.tPh-orbit.ph)*.12; orbit.r+=(orbit.tR-orbit.r)*.14;
+      let th=orbit.th+orbit.oTh; if(!flat) th=clamp(th,-1.42,1.42);
+      const ph=clamp(orbit.ph+orbit.oPh,.08,flat?1.5:2.1), ty=(gl.baseY||0)+gl.H*.48;
+      gl.camera.position.set(Math.sin(th)*Math.sin(ph)*orbit.r,ty+Math.cos(ph)*orbit.r,Math.cos(th)*Math.sin(ph)*orbit.r);
+      gl.camera.lookAt(0,ty,0);
+    }
+    gl.renderer.render(gl.scene,gl.camera);
+  });
+}
+
+/* ================= controls wiring ================= */
+const inkWrap=$('#inkChips');
+INKS.forEach(c=>{ const b=document.createElement('button'); b.className='cchip'+(c===S.ink?' on':''); b.style.background=c; b.style.color=c; b.dataset.c=c; b.setAttribute('aria-label','సిరా '+c); b.addEventListener('click',()=>{ S.ink=c; $('#cInk').value=c; syncInkChips(); runPipeline(); ping(820,.06); }); inkWrap.appendChild(b); });
+function syncInkChips(){ $$('#inkChips .cchip').forEach(b=>b.classList.toggle('on',b.dataset.c.toLowerCase()===S.ink.toLowerCase())); }
+$('#cInk').addEventListener('input',e=>{ S.ink=e.target.value; syncInkChips(); runPipeline(); });
+const procDeb=debounce(runPipeline,140);
+function bindRange(id,key,out,fmt,int,after){ $(id).addEventListener('input',e=>{ S[key]=int?parseInt(e.target.value):parseFloat(e.target.value); $(out).textContent=fmt(S[key]); after&&after(); }); }
+bindRange('#cThr','thr','#vThr',v=>v,true,procDeb);
+bindRange('#cDen','den','#vDen',v=>v,true,procDeb);
+bindRange('#cThick','thick','#vThick',v=>v+' మి.మీ',true,()=>{ layoutObject(); });
+bindRange('#cSize','size','#vSize',v=>v+'%',true,()=>{ layoutObject(); });
+bindRange('#cSpin','spin','#vSpin',v=>String(v),true,()=>{ $('#vSpinBtn').classList.toggle('on',S.spin>0); });
+$('#cInv').addEventListener('change',e=>{ S.inv=e.target.checked; runPipeline(); });
+$('#cShadow').addEventListener('change',e=>{ S.shadow=e.target.checked; applyEnv(); });
+$('#cPaper').addEventListener('change',e=>{ S.paper=e.target.checked; applyEnv(); });
+$('#cGrid').addEventListener('change',e=>{ S.grid=e.target.checked; applyEnv(); });
+$('#cQrPrev').addEventListener('change',e=>{ S.qrPrev=e.target.checked; refreshTexture(); toast(S.qrPrev?'📦 ఆఫ్‌లైన్ QRలో ఇలా లైన్-ఆర్ట్‌గా కనిపిస్తుంది':'ఫుల్-క్వాలిటీ ప్రివ్యూ — ☁ మోడ్‌లో స్కాన్ చేసినవారికి ఇలాగే కనిపిస్తుంది'); });
+$('#btnReset').addEventListener('click',()=>{ Object.assign(S,DEF); syncControls(); setSurface('paper',true); runPipeline(); toast('డిఫాల్ట్‌కు రీసెట్ ↺'); });
+$('#btnRandomInk').addEventListener('click',()=>{ S.ink=INKS[Math.floor(Math.random()*INKS.length)]; $('#cInk').value=S.ink; syncInkChips(); runPipeline(); toast('కొత్త సిరా రంగు 🎨'); ping(840,.07); });
+function syncControls(){
+  $('#cThr').value=S.thr; $('#vThr').textContent=S.thr;
+  $('#cDen').value=S.den; $('#vDen').textContent=S.den;
+  $('#cInv').checked=S.inv;
+  $('#cThick').value=S.thick; $('#vThick').textContent=S.thick+' మి.మీ';
+  $('#cSize').value=S.size; $('#vSize').textContent=S.size+'%';
+  $('#cSpin').value=S.spin; $('#vSpin').textContent=S.spin;
+  $('#cShadow').checked=S.shadow; $('#cPaper').checked=S.paper; $('#cGrid').checked=S.grid; $('#cQrPrev').checked=S.qrPrev;
+  $('#qrQuality').value=S.quality; $('#cInk').value=S.ink; syncInkChips();
+  $('#vSpinBtn').classList.toggle('on',S.spin>0);
+  $('#cSurface').value=S.surface;
+}
+/* viewer spin toggle */
+let spinBefore=S.spin||8;
+$('#vSpinBtn').addEventListener('click',()=>{ if(S.spin>0){ spinBefore=S.spin; S.spin=0; } else { S.spin=spinBefore||8; } $('#cSpin').value=S.spin; $('#vSpin').textContent=S.spin; $('#vSpinBtn').classList.toggle('on',S.spin>0); ping(760,.06); });
+
+/* ================= viewer mode ================= */
+let askedThisSession=false;
+function enterViewer(fromHash){
+  S.mode='viewer';
+  $('#viewerRoot').hidden=false; document.body.classList.add('lock');
+  $('#viewerSlot').appendChild($('#glWrap'));
+  requestAnimationFrame(resizeGL);
+  askedThisSession=true;
+  $('#askCard').hidden=(fromHash==='wait');
+  if(GUEST) $('#vExit').hidden=true;
+  $('#vTitle').textContent='మీ డ్రాయింగ్ · 3D';
+  maybeAskMotion();
+}
+function exitViewer(){
+  if(xrSession){ exitAfterXR=true; try{ xrSession.end(); }catch(e){} return; }
+  S.mode='studio';
+  $('#viewerRoot').hidden=true; $('#askCard').hidden=true; document.body.classList.remove('lock');
+  $('#studioSlot').appendChild($('#glWrap'));
+  requestAnimationFrame(resizeGL);
+  if(history.replaceState) history.replaceState(null,'',location.pathname+location.search);
+  else location.hash='';
+}
+$('#vExit').onclick=exitViewer;
+$('#stageExpand').addEventListener('click',()=>enterViewer(true));
+$('#vHelp').addEventListener('click',()=>{ $('#askCard').hidden=false; });
+$('#askWhite').addEventListener('click',()=>{ $('#askCard').hidden=true; disableCamera(); setView('front'); sndOk(); });
+$$('.surfBtn').forEach(b=>b.addEventListener('click',async()=>{
+  $('#askCard').hidden=true; setSurface(b.dataset.surface,true); sndOk();
+  if(xrSupported&&gl&&!glFail){ if(await startXR()) return; }   /* నిజమైన AR: డ్రాయింగ్ సర్ఫేస్‌కు అతుక్కుంటుంది */
+  await enableCamera();                                            /* AR లేని ఫోన్లలో: కెమెరా ఓవర్‌లే మోడ్ */
+  $('#vHint').textContent=SURF[S.surface].hint;
+}));
+function applyHash(){
+  const mj=location.hash.match(/^#([jk])=([A-Za-z0-9\-]+)/);
+  if(mj){ openCloudViewer(mj[1],mj[2]); return; }
+  if(/^#s\b/.test(location.hash)){ if(!srcCanvas) loadSample(); enterViewer(true); return; }
+  const m=location.hash.match(/#d=([A-Za-z0-9\-_]+)/);
+  if(m){
+    try{
+      const {g,ink}=decodePayload(m[1]);
+      gridData=g; S.ink=ink; payload=m[1];
+      const art=gridToCanvas(g,ink,900);
+      const c=document.createElement('canvas'); c.width=art.width; c.height=art.height;
+      const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(art,0,0);
+      srcCanvas=c; procCanvas=art;
+      $('#fileName').textContent='స్కాన్ చేసిన డ్రాయింగ్';
+      $('#procStatus').textContent=`QR నుండి డీకోడ్ ✓ ${g.w}×${g.h}`;
+      fullLink=baseUrl().split('#')[0]+'#d='+payload; $('#linkOut').value=fullLink;
+      refreshThumb(); buildGridAndPayload(); refreshQR(); refreshTexture(); syncControls();
+      enterViewer(true);
+    }catch(e){ toast('ఈ లింక్‌లోని డ్రాయింగ్ డేటా చదవలేకపోయాను','err',4000); }
+  } else if(S.mode==='viewer'){ exitViewer(); }
+}
+window.addEventListener('hashchange',applyHash);
+
+/* ================= surface: పేపర్ / గోడ / పోస్టర్ ================= */
+const SURF={
+  paper:{ ic:'📄', label:'పేపర్', hint:'ఖాళీ పేపర్ / టేబుల్ వైపు చూపించండి — డ్రాయింగ్ దానిపై నిలబడుతుంది' },
+  wall:{ ic:'🧱', label:'గోడ', hint:'గోడ వైపు చూపించండి — డ్రాయింగ్ గోడ మీద 3Dగా కనిపిస్తుంది' },
+  poster:{ ic:'🖼️', label:'పోస్టర్', hint:'పోస్టర్ వైపు చూపించండి — డ్రాయింగ్ పోస్టర్ నుంచి బయటికి వస్తుంది' }
+};
+function setSurface(name,quiet){
+  if(!SURF[name]) name='paper';
+  S.surface=name;
+  const flat=name==='paper';
+  orbit.th=Math.atan2(Math.sin(orbit.th),Math.cos(orbit.th));          /* కోణాన్ని −π..π లోకి తెచ్చి, గిర్రున తిరగకుండా */
+  orbit.tTh=flat?orbit.th:clamp(orbit.th,-1.3,1.3);
+  orbit.tPh=flat?1.18:1.42; orbit.last=performance.now();
+  layoutObject(); applyEnv();
+  if(gl) orbit.tR=gl.H*(flat?2.5:2.9);
+  $('#cSurface').value=name; $('#vSurfIc').textContent=SURF[name].ic; $('#vSurfLabel').textContent=SURF[name].label;
+  $('#vHint').textContent=SURF[name].hint;
+  if(!quiet){ toast(SURF[name].ic+' '+SURF[name].hint,'',3200); ping(700,.07); }
+}
+$('#cSurface').addEventListener('change',e=>setSurface(e.target.value));
+$('#vSurf').addEventListener('click',()=>{ const k=Object.keys(SURF); setSurface(k[(k.indexOf(S.surface)+1)%k.length]); });
+$('#viewerRoot').addEventListener('beforexrselect',e=>{ if(e.target.closest&&e.target.closest('.vbar,#askCard')) e.preventDefault(); });
+
+/* ================= cloud short-link — QRలో చిన్న లింక్, స్కాన్ చేస్తే నేరుగా ఓపెన్ ================= */
+const PROV={ j:'https://jsonblob.com/api/jsonBlob', k:'https://superjsonblob.com/api/jsonBlob' };
+const LS_KEY='qm3d_cloud';
+try{ const s=(localStorage.getItem(LS_KEY)||'').split(':'); if(PROV[s[0]]&&/^[A-Za-z0-9\-]+$/.test(s[1]||'')){ cloud.p=s[0]; cloud.id=s[1]; } }catch(e){}
+function ecFor(url){ return (url||'').length<=160?'Q':'M'; }
+function tfetch(url,opt,ms){ const c=new AbortController(), t=setTimeout(()=>c.abort(),ms||12000); return fetch(url,Object.assign({signal:c.signal},opt||{})).finally(()=>clearTimeout(t)); }
+function loadImage(src){ return new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('img')); i.src=src; }); }
+function updateLink(){
+  const base=baseUrl().split('#')[0];
+  let kind='inline';
+  if(S.quality==='cloud'){
+    if(cloud.id){ fullLink=base+'#'+cloud.p+'='+cloud.id; kind='cloud'; }
+    else if(isSample){ fullLink=base+'#s'; kind='sample'; }
+    else fullLink=inlineLink;
+  } else fullLink=inlineLink;
+  $('#linkOut').value=fullLink||'';
+  const n=(fullLink||'').length;
+  $('#qrBytes').textContent = kind==='cloud' ? `☁ చిన్న లింక్ · ${n} అక్షరాలు · నేరుగా ఓపెన్ ✓`
+    : kind==='sample' ? `నమూనా లింక్ · ${n} అక్షరాలు`
+    : `📦 డ్రాయింగ్ QR లోపలే · ${n} అక్షరాలు`;
+  return kind;
+}
+function setCloudStatus(k){
+  const el=$('#cloudStatus'); if(!el) return;
+  const M={
+    idle:['var(--tx2)','☁ మీ డ్రాయింగ్ అప్‌లోడ్ చేయగానే ఆటోమేటిక్‌గా పబ్లిష్ అవుతుంది — QR స్కాన్ చేస్తే నేరుగా ఓపెన్ అవుతుంది.'],
+    busy:['var(--cy)','☁ సేవ్ అవుతోంది…'],
+    ok:['var(--gr)','✓ లైవ్! ఈ QR స్కాన్ చేస్తే మీ డ్రాయింగ్ నేరుగా 3Dలో ఓపెన్ అవుతుంది. కొత్త డ్రాయింగ్ ఇస్తే ఇదే QRలో ఆటోమేటిక్‌గా మారుతుంది.'],
+    stale:['var(--am)','● QRలో ఇంకా పాత డ్రాయింగ్ ఉంది — ఇప్పుడు కనిపిస్తున్నది పెట్టాలంటే “☁ పబ్లిష్ / అప్‌డేట్” నొక్కండి.'],
+    fail:['var(--am)','⚠ క్లౌడ్ అందలేదు — ప్రస్తుతానికి డ్రాయింగ్ QR లోపలే ఉంది (📦, పెద్ద QR). ఇంటర్నెట్ చూసి “పబ్లిష్” మళ్లీ నొక్కండి.']
+  }[k]||['var(--tx2)','☁ —'];
+  el.style.color=M[0]; el.textContent=M[1];
+  $('#btnPublish').classList.toggle('pulse',k==='stale');
+}
+function makeBlob(){
+  let max=640, url='';
+  for(let k=0;k<4;k++){
+    const sc=Math.min(1,max/Math.max(procCanvas.width,procCanvas.height));
+    const c=document.createElement('canvas'); c.width=Math.max(2,Math.round(procCanvas.width*sc)); c.height=Math.max(2,Math.round(procCanvas.height*sc));
+    const x=c.getContext('2d'); x.imageSmoothingQuality='high'; x.drawImage(procCanvas,0,0,c.width,c.height);
+    url=c.toDataURL('image/png'); if(url.length<180000) break; max=Math.round(max*.72);
+  }
+  return { v:2, t:Date.now(), ink:S.ink, thick:S.thick, size:S.size, img:url };
+}
+async function cloudFetch(p,id){
+  if(!PROV[p]) throw new Error('prov');
+  const r=await tfetch(PROV[p]+'/'+encodeURIComponent(id),{headers:{'Accept':'application/json'},cache:'no-store'});
+  if(!r.ok) throw new Error('http '+r.status);
+  const d=await r.json();
+  if(!d||typeof d.img!=='string'||!/^data:image\/(png|webp|jpeg);base64,/.test(d.img)) throw new Error('bad');
+  return d;
+}
+async function createBlob(body){
+  const headers={'Content-Type':'application/json','Accept':'application/json'};
+  for(const p of ['j','k']){
+    try{
+      const r=await tfetch(PROV[p],{method:'POST',headers,body});
+      if(!r.ok) continue;
+      let id=r.headers.get('x-jsonblob-id')||r.headers.get('x-jsonblob')||'';
+      const loc=r.headers.get('location')||'';
+      if(!id&&loc) id=loc.split('?')[0].split('/').filter(Boolean).pop()||'';
+      if(!id){ try{ const j=await r.json(); if(j&&typeof j.id==='string'&&!j.img) id=j.id; }catch(e){} }
+      if(id&&/^[A-Za-z0-9\-]+$/.test(id)) return {p,id};
+    }catch(e){}
+  }
+  return null;
+}
+let pubSeq=0;
+async function cloudPublish(manual){
+  if(GUEST||!procCanvas) return;
+  const seq=++pubSeq; cloud.busy=true; setCloudStatus('busy');
+  let ok=false;
+  try{
+    const body=JSON.stringify(makeBlob());
+    let need=!cloud.id;
+    if(cloud.id){
+      let st=-1;
+      try{ const r=await tfetch(PROV[cloud.p]+'/'+cloud.id,{method:'PUT',headers:{'Content-Type':'application/json','Accept':'application/json'},body}); st=r.status; ok=r.ok; }catch(e){}
+      if(!ok&&(st===404||st===410)) need=true;      /* పాత బ్లాబ్ పోయి ఉంటేనే కొత్తది — లేదంటే ప్రింట్ అయిన QR మారకూడదు */
+    }
+    if(need){
+      const made=await createBlob(body);
+      if(made){ cloud.p=made.p; cloud.id=made.id; ok=true; try{ localStorage.setItem(LS_KEY,made.p+':'+made.id); }catch(e){} }
+    }
+  }catch(e){}
+  if(seq!==pubSeq) return;
+  cloud.busy=false; cloud.ok=ok;
+  updateLink(); refreshQR(); setCloudStatus(ok?'ok':(cloud.id?'stale':'fail'));
+  if(ok){ toast(manual?'☁ పబ్లిష్ అయింది ✓ ఇప్పుడు QR స్కాన్ చేస్తే నేరుగా ఈ డ్రాయింగ్ ఓపెన్ అవుతుంది':'☁ QR అప్‌డేట్ అయింది ✓ అదే QR — కొత్త డ్రాయింగ్','ok',3400); if(manual) sndOk(); }
+  else toast(cloud.id?'అప్‌డేట్ కాలేదు — ఇంటర్నెట్ చూసి “పబ్లిష్” మళ్లీ నొక్కండి':'క్లౌడ్ సేవ్ కాలేదు — ప్రస్తుతానికి డ్రాయింగ్‌ను QR లోపలే పెట్టాను','warn',4800);
+}
+const schedulePublish=debounce(()=>cloudPublish(false),1200);
+function maybeAutoPublish(){
+  if(GUEST||S.quality!=='cloud') return;
+  if(skipPublish){ skipPublish=false; return; }
+  if(isSample){ if(cloud.id) setCloudStatus('stale'); return; }
+  schedulePublish();
+}
+async function restorePublished(){
+  try{
+    const d=await cloudFetch(cloud.p,cloud.id);
+    const img=await loadImage(d.img);
+    const c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight;
+    const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0);
+    if(/^#[0-9a-f]{6}$/i.test(d.ink||'')) S.ink=d.ink;
+    if(d.thick) S.thick=clamp(Math.round(+d.thick)||22,2,80);
+    if(d.size) S.size=clamp(Math.round(+d.size)||100,60,170);
+    isSample=false; skipPublish=true; srcCanvas=c; cloud.ok=true;
+    $('#fileName').textContent='మీ పబ్లిష్ అయిన డ్రాయింగ్';
+    syncControls(); runPipeline(); setCloudStatus('ok');
+    return true;
+  }catch(e){
+    if(/http (404|410)/.test(String(e&&e.message))){ cloud.id=''; cloud.p=''; try{ localStorage.removeItem(LS_KEY); }catch(_){} }
+    setCloudStatus(cloud.id?'stale':'idle');
+    return false;
+  }
+}
+async function applyCloudData(d){
+  const img=await loadImage(d.img);
+  const c=document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight;
+  c.getContext('2d').drawImage(img,0,0);
+  procCanvas=c; gridData=null; S.qrPrev=false; $('#cQrPrev').checked=false;
+  if(/^#[0-9a-f]{6}$/i.test(d.ink||'')) S.ink=d.ink;
+  if(d.thick) S.thick=clamp(Math.round(+d.thick)||22,2,80);
+  if(d.size) S.size=clamp(Math.round(+d.size)||100,60,170);
+  refreshTexture(); layoutObject(); applyEnv();
+}
+async function openCloudViewer(p,id){
+  enterViewer('wait'); $('#vLoading').hidden=false;
+  try{
+    const d=await cloudFetch(p,id);
+    await applyCloudData(d);
+    $('#vLoading').hidden=true; $('#askCard').hidden=false; sndOk();
+  }catch(e){
+    $('#vLoading').hidden=true;
+    toast('డ్రాయింగ్ తేలేకపోయాను — ఇంటర్నెట్ చూసి పేజీని మళ్లీ తెరవండి','err',5200);
+    if(!procCanvas) loadSample();
+    $('#askCard').hidden=false;
+  }
+}
+$('#btnPublish').addEventListener('click',()=>{ if(S.quality!=='cloud'){ S.quality='cloud'; $('#qrQuality').value='cloud'; } cloudPublish(true); });
+$('#btnNewQr').addEventListener('click',()=>{
+  cloud.id=''; cloud.p=''; cloud.ok=false; try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  if(S.quality!=='cloud'){ S.quality='cloud'; $('#qrQuality').value='cloud'; }
+  toast('🆕 కొత్త QR తయారవుతోంది — పాత QR పాత డ్రాయింగ్‌నే చూపిస్తుంది');
+  cloudPublish(true);
+});
+['#cThick','#cSize'].forEach(id=>$(id).addEventListener('change',()=>maybeAutoPublish()));
+
+/* ================= misc ui ================= */
+$('#soundBtn').addEventListener('click',()=>{ S.sound=!S.sound; $('#icoSndOn').hidden=!S.sound; $('#icoSndOff').hidden=S.sound; toast(S.sound?'సౌండ్ ఆన్ 🔊':'సౌండ్ ఆఫ్ 🔇','',1500); if(S.sound)ping(880,.1); });
+if('IntersectionObserver' in window){
+  const secIO=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting)$$('.nlink').forEach(l=>l.classList.toggle('act',l.dataset.sec===en.target.id)); }),{rootMargin:'-40% 0px -55% 0px'});
+  ['studio','qr','how'].forEach(id=>secIO.observe(document.getElementById(id)));
+  const rvIO=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){en.target.classList.add('in');rvIO.unobserve(en.target);} }),{threshold:.1});
+  $$('.rv').forEach(el=>rvIO.observe(el));
+}else{ $$('.rv').forEach(el=>el.classList.add('in')); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&S.mode==='viewer'&&!xrBusy&&!GUEST)exitViewer(); });
+
+/* ================= boot ================= */
+$('#baseUrl').value=location.href.split('#')[0];
+syncControls();
+initGL();
+setCloudStatus(cloud.id?'ok':'idle');
+checkXR();
+if(GUEST) applyHash();                                                  /* స్కాన్ → నేరుగా డ్రాయింగ్ వ్యూయర్ */
+else if(cloud.id) restorePublished().then(ok=>{ if(!ok) loadSample(); });
+else loadSample();
+</script>
+</body>
+</html>
